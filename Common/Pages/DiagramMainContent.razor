@@ -1,0 +1,796 @@
+@using Syncfusion.Blazor.Diagram
+@using Syncfusion.Blazor.Buttons
+@using Microsoft.JSInterop;
+@using System.Collections.ObjectModel
+@using Microsoft.AspNetCore.Components;
+@using System.Text.Json;
+@using System;
+@inject IJSRuntime JSRuntime
+@inherits SampleBaseComponent;
+
+@namespace LogicCircuit
+
+
+<div class="db-diagram-container">
+    <div id="diagramContainerDiv" class=@DiagramContainerClassName style="position:relative;">        
+        <SfDiagramComponent @ref="@Diagram" ID="diagram" NodeCreating="@OnNodeCreating" ConnectorCreating="@OnConnectorCreating" SelectionSettings="@selectionSettings" @bind-Width="@DiagramWidth" @bind-Height="@DiagramHeight" SelectionChanged="@SelectionChanged" @bind-Nodes="@nodes" @bind-Connectors="@connectors" HistoryChanged="@HistoryChange" @bind-DrawingObject="@DiagramDrawingObject" ScrollChanged="ScrollChanged" @bind-InteractionController="DiagramTool" CollectionChanged="CollectionChanged" Created="OnCreated" Click="@OnClick" ConnectionChanged="ConnectionChanged">
+            <PageSettings @bind-ShowPageBreaks="@DiagramShowPageBreaks" @bind-Orientation="@DiagramOrientation" @bind-Width="@DiagramPageWidth" @bind-Height="@DiagramPageHeight" @bind-MultiplePage=@IsMultiplePage>
+                <BackgroundStyle @bind-Background="@DiagramBgColor"></BackgroundStyle>
+                <PageMargin @bind-Left="@marginLeft" @bind-Top="@marginRight"></PageMargin>
+            </PageSettings>
+            <SnapSettings @bind-Constraints="@SnapConstraint">
+                <HorizontalGridLines LineIntervals="@SnapIntervals" LineColor="@Hlinecolor" SnapIntervals="@SnapIntervals1" DotIntervals="@HDotIntervals"></HorizontalGridLines>
+                <VerticalGridLines LineIntervals="@SnapIntervals" LineColor="@Vlinecolor" SnapIntervals="@SnapIntervals1" DotIntervals="@VDotIntervals"></VerticalGridLines>
+            </SnapSettings>
+            <ScrollSettings @bind-ScrollLimit="@scrollLimit" @bind-CurrentZoom="@CurrentZoom" @bind-MaxZoom="@maxZoom" @bind-MinZoom="@minZoom"></ScrollSettings>
+              <DiagramHistoryManager HistoryAdding="@Oncanlog" ></DiagramHistoryManager>
+             <CommandManager Commands="@KeyBoardCommands" Execute="@CommandExecute" >
+        </CommandManager>
+        </SfDiagramComponent>
+    </div>
+</div>
+@code {
+    
+    private bool canExecuteCommand;
+    /// <summary>
+    /// Gets or sets the collection of nodes in the diagram.
+    /// </summary>
+    public DiagramObjectCollection<Node> nodes { get; set; } = new DiagramObjectCollection<Node>();
+
+    /// <summary>
+    /// Gets or sets the collection of connectors in the diagram.
+    /// </summary>
+    public DiagramObjectCollection<Connector> connectors  {get;set;}= new DiagramObjectCollection<Connector>();
+    /// <summary>
+    /// Gets or sets the CSS class applied to the main diagram container element in the application.
+    /// </summary>
+    public string DiagramContainerClassName = "db-current-diagram-container";
+    /// <summary>
+    /// Gets or sets the horizontal line intervals for the gridlines.
+    /// </summary>
+    public double[] HLineIntervals { get; set; } = new double[] { 1.25, 18.75, 0.25, 19.75, 0.25, 19.75, 0.25, 19.75, 0.25, 19.75,};
+    /// <summary>
+    /// Gets or sets the vertical line intervals for the gridlines.
+    /// </summary>
+    public double[] VLineIntervals { get; set; } = new double[] { 1.25, 18.75, 0.25, 19.75, 0.25, 19.75, 0.25, 19.75, 0.25, 19.75,};   
+    /// <summary>
+    /// Gets or sets the selection settings for the diagram.
+    /// </summary>    
+    DiagramSelectionSettings selectionSettings = new DiagramSelectionSettings();
+    /// <summary>
+    /// Represents a drawing object in the diagram.
+    /// </summary>
+    public IDiagramObject? DiagramDrawingObject { get; set; }
+    /// <summary>
+    /// Represents a diagram interaction tool.
+    /// </summary>
+    public DiagramInteractions DiagramTool = DiagramInteractions.Default;
+    /// <summary>
+    /// Gets or sets the scroll limit for the diagram's viewport.
+    /// </summary>
+    public ScrollLimitMode scrollLimit { get; set; } = ScrollLimitMode.Infinity;
+    /// <summary>
+    /// Gets or sets the current zoom level of the diagram.
+    /// </summary>
+    public double CurrentZoom { get; set; } = 0.74;
+    /// <summary>
+    /// Gets or sets the min zoom level of the diagram.
+    /// </summary>
+    public double minZoom { get; set; } = 0.25;
+    /// <summary>
+    /// Gets or sets the max zoom level of the diagram.
+    /// </summary>
+    public double maxZoom { get; set; } = 30;
+    /// <summary>
+    /// Gets or sets the value that indicates whether the diagram's page break should be visible
+    /// </summary>
+    public bool DiagramShowPageBreaks = false;
+    /// <summary>
+    /// Gets or sets the orientation of the diagram.
+    /// </summary>
+    public PageOrientation DiagramOrientation = PageOrientation.Landscape;
+    /// <summary>
+    /// Gets or sets the page width for the diagram.
+    /// </summary>
+    public double? DiagramPageWidth = 1000;
+    /// <summary>
+    /// Gets or sets the page height for the diagram.
+    /// </summary>
+    public double? DiagramPageHeight = 1056;
+    /// <summary>
+    /// Gets or sets the diagram's width.
+    /// </summary>
+    public string DiagramWidth = "100%";
+    /// <summary>
+    /// Gets or sets the diagram's height.
+    /// </summary>
+    public string DiagramHeight = "100%";
+    /// <summary>
+    /// Gets or sets the left margin of the diagram content.
+    /// </summary>
+    double marginLeft = 5;
+    /// <summary>
+    /// Gets or sets the right margin of the diagram content.
+    /// </summary>
+    double marginRight = 5;  
+    /// <summary>
+    /// Gets or sets the horizontal grid color of the diagram.
+    /// </summary>
+    public string Hlinecolor { get; set; } = "lightgray";
+    /// <summary>
+    /// Gets or sets the vertical grid color of the diagram.
+    /// </summary>
+    public string Vlinecolor { get; set; } = "lightgray";
+    /// <summary>
+    /// Gets or sets a value indicating whether the diagram is set to display multiple pages.
+    /// </summary>
+    public bool IsMultiplePage = true;
+    public double[] SnapIntervals1 { get; set; } = new double[] {
+           20
+    };
+    /// <summary>
+    /// Gets or sets a value indicating whether an undo operation is available in the diagram.
+    /// </summary>
+    public bool IsUndo = false;
+    /// <summary>
+    /// Gets or sets a value indicating whether a redo operation is available in the diagram.
+    /// </summary>
+    public bool IsRedo = false;
+    /// <summary>
+    /// Gets or sets a value indicating whether a selection want to happen or not
+    /// </summary>
+    public bool cancelSelection = false;
+    /// <summary>
+    /// Gets or sets the background color of the diagram.
+    /// </summary>
+    public string DiagramBgColor = "white";  
+    /// <summary>
+    /// Gets or sets the snap constraint for the diagram.
+    /// </summary>
+    public SnapConstraints SnapConstraint = SnapConstraints.All;
+    /// <summary>
+    /// Gets or sets the snap intervals in the diagram.
+    /// </summary>
+
+    public double[] SnapIntervals { get; set; } = new double[] {
+            1, 9, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75
+    }; 
+
+    public bool show = true;
+    /// <summary>
+    /// Property used to indicate when a diagram element is selected or deselected.
+    /// </summary>
+    public bool diagramSelected = false;
+    /// <summary>
+    /// This collection contains the keyboard keys used to invoke the event.
+    /// </summary>
+    DiagramObjectCollection<KeyboardCommand> KeyBoardCommands = new DiagramObjectCollection<KeyboardCommand>()
+    {
+        new KeyboardCommand()
+        {
+            Name = "SelectAll",
+            Gesture = new KeyGesture() { Key = DiagramKeys.A, Modifiers = ModifierKeys.Control }
+        },
+        new KeyboardCommand()
+        {
+            Name = "Delete",
+            Gesture = new KeyGesture() { Key = DiagramKeys.Delete }
+        }
+    };
+
+
+    public double[] HDotIntervals { get; set; } = new double[] { 1, 19, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, };
+    public double[] VDotIntervals { get; set; } = new double[] { 1, 19, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, };
+
+    protected override void OnInitialized()
+    {
+        Connector bezierConnector = new Connector()
+        {
+            ID = "bezierConnector",
+            Type = ConnectorSegmentType.Bezier,
+            BezierConnectorSettings = new BezierConnectorSettings()
+            {
+                //Define the visibility of the control points.
+                ControlPointsVisibility = ControlPointsVisibility.Source | ControlPointsVisibility.Target
+            },
+        };
+        DiagramDrawingObject = bezierConnector;
+        InitDiagramModel();   
+        UpdateSelectorHandle();
+    }
+
+    public async Task OnNotify(NotifyProperties prop)
+    {
+        await InvokeAsync(() =>
+        {   if (this.Service != null)
+            {
+                this.Service.Prop.RestricMouseEvents = false;
+            }
+        });
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+    }
+    /// <summary>
+    /// This method is used to render the user handles
+    /// </summary>
+    private void UpdateSelectorHandle()
+    {
+        selectionSettings.Constraints = SelectorConstraints.All & ~(SelectorConstraints.ResizeAll | SelectorConstraints.Rotate);
+
+    }
+
+    /// <summary>
+    /// This method is used to convert JSON number into integer when loading the data.
+    /// </summary>
+    /// <param name="obj">The node object is the diagram nodes</param>
+    private void OnNodeCreating(IDiagramObject obj)
+    {
+        Dictionary<string, object> dictionary = new Dictionary<string, object>();
+
+        if (obj != null && obj is Node nodeobj) 
+        {
+            if(nodeobj.AdditionalInfo.Count>0)
+            {
+                if (nodeobj.AdditionalInfo.TryGetValue("BinaryState", out var binaryStateObj) &&
+                        nodeobj.AdditionalInfo.TryGetValue("ControlType", out var controlTypeObj))
+                {
+                    if (binaryStateObj is JsonElement binaryStateElement && binaryStateElement.ValueKind == JsonValueKind.Number)
+                    {
+                        nodeobj.AdditionalInfo["BinaryState"] = binaryStateElement.GetInt32();
+                    }
+
+                    if (controlTypeObj is JsonElement controlTypeElement && controlTypeElement.ValueKind == JsonValueKind.String)
+                    {
+                        nodeobj.AdditionalInfo["ControlType"] = controlTypeElement.GetString();
+                    }
+                }
+            }
+        }
+
+    }  
+    /// <summary>
+    /// This method is used to set the default values of the connector.
+    /// </summary>
+    /// <param name="obj">The connector object to which the default to be applied</param>
+    private void OnConnectorCreating(IDiagramObject obj)
+    {
+        if(obj is Connector connector)
+        {
+            connector.Type = ConnectorSegmentType.Bezier;
+            connector.BezierConnectorSettings = new BezierConnectorSettings()
+            {
+                ControlPointsVisibility = ControlPointsVisibility.Source | ControlPointsVisibility.Target,
+                Smoothness = BezierSmoothness.SymmetricDistance,
+                AllowSegmentsReset = false 
+            };
+            connector.Constraints = ConnectorConstraints.Default & ~ConnectorConstraints.Drag;
+        }
+    }
+
+    /// <summary>
+    /// Event handler for the selection changed event in the Syncfusion Blazor Diagram component.
+    /// </summary>
+    /// <param name="args">The event arguments containing information about the selection change.</param>
+
+    private void SelectionChanged(Syncfusion.Blazor.Diagram.SelectionChangedEventArgs args)
+    {
+        if (args.NewValue.Count > 0)
+        {
+            if(args.NewValue[0] is Connector connector)
+            {
+                Diagram.SelectionSettings.Constraints = SelectorConstraints.All;
+            }
+            else
+            {
+                Diagram.SelectionSettings.Constraints = SelectorConstraints.All & ~(SelectorConstraints.Rotate | SelectorConstraints.ResizeAll);
+            }
+            if (cancelSelection)
+            {
+                Diagram.SelectionSettings.Connectors.Remove(args.NewValue[0] as Connector);
+                cancelSelection = false;
+            }
+
+        }
+    }
+
+    /// <summary>
+    /// Event handler for the history changed event in the Syncfusion Blazor Diagram component.
+    /// </summary>
+    /// <param name="args">The event arguments containing information about the history change.</param>
+    private async Task HistoryChange(HistoryChangedEventArgs args)
+    {
+        await Parent.Toolbar.EnableToolbarItems(new object() { }, "historychange");
+    }
+    /// <summary>
+    /// Event handler for the scroll changed event.
+    /// </summary>
+    /// <param name="args">The event arguments containing information about the scroll change.</param>
+    private void ScrollChanged(ScrollChangedEventArgs args)
+    {
+        if((Parent.DiagramContent.CurrentZoom >= 0.25 && Parent.DiagramContent.CurrentZoom <= 30) && Parent.Toolbar.ZoomItemDropdownContent != FormattableString.Invariant($"{Math.Round(Parent.DiagramContent.CurrentZoom * 100)}") + "%")
+        {
+            Parent.Toolbar.DiagramZoomValueChange();
+        }
+    }
+
+    /// <summary>
+    /// Sets the Pan mode to diagram tool
+    /// </summary>
+    public void UpdateTool()
+    {
+        DiagramTool = DiagramInteractions.ZoomPan;
+        StateHasChanged();
+    }
+
+    /// <summary>
+    ///This method is used to set the ContinuousDraw to the Drawtool
+    /// </summary>
+    public void UpdateContinousDrawTool()
+    {
+        DiagramTool = DiagramInteractions.ContinuousDraw;
+        StateHasChanged();
+    }
+    /// <summary>
+    ///This method is used to set the pointer option to the Drawtool
+    /// </summary>
+    public void UpdatePointerTool()
+    {
+        DiagramTool = DiagramInteractions.SingleSelect | DiagramInteractions.MultipleSelect;
+        StateHasChanged();
+    }
+    /// <summary>
+    /// Zooms to a specific level or region based on the provided zoom options.
+    /// </summary>
+    /// <param name="options">The zoom options specifying the target zoom level or region.</param>
+    public void ZoomTo(ZoomOptions options)
+    {
+        double factor = options.ZoomFactor != 0 ? options.ZoomFactor : 0.2;
+        factor = options.Type == "ZoomOut" ? 1 / (1 + factor) : (1 + factor);
+        Diagram.Zoom(factor, null);
+    }
+    /// <summary>
+    /// Represents options for zooming functionality.
+    /// </summary>
+    public class ZoomOptions
+    {
+        public double ZoomFactor { get; set; }
+        public string Type { get; set; } = "";
+    }
+
+    public void StateChanged()
+    {
+        StateHasChanged();
+    }
+    /// <summary>
+    /// Loads a new diagram based on the provided JSON representation.
+    /// </summary>
+    /// <param name="Json">The JSON representation of the diagram to load.</param>
+    public void LoadNewDiagram(string Json)
+    {
+        _= Diagram.LoadDiagram(Json);
+    }
+
+    public void Dispose()
+    {
+        Service.Notify -= OnNotify;
+    }
+    /// <summary>
+    /// Prevent the history entry in the history manager
+    /// </summary>
+    /// <param name="entry">The event arguments containing information about the type of history entries.</param>
+    private void Oncanlog(HistoryAddingEventArgs entry)
+    {
+        if (entry.Entry.Type == HistoryEntryType.PropertyChanged)
+        {
+            entry.Cancel = true;
+        }
+
+    }
+    /// <summary>
+    /// Event handler for Connection Changed. It invoke when the connection is changed.
+    /// </summary>
+    /// <param name="args">The event arguments containing information about the connection change.</param>
+    private void ConnectionChanged(ConnectionChangedEventArgs args)
+    {
+        RunSimulation();
+    }
+    /// <summary>
+    /// This method invoke when the given key is pressed.
+    /// </summary>
+    private void CommandExecute(CommandKeyArgs args)
+    {
+        if (args.Gesture.Modifiers == ModifierKeys.Control && args.Gesture.Key == DiagramKeys.A)
+        {
+            Diagram.SelectAll();
+            canExecuteCommand = true;
+        }
+        if (args.Gesture.Key == DiagramKeys.Delete && canExecuteCommand)
+        {
+            canExecuteCommand = false;
+            IsLoadingData = false;
+            Diagram.Clear();
+            IsLoadingData = true;
+        }
+        if (args.Gesture.Key == DiagramKeys.Delete)
+        {
+            if (Diagram.SelectionSettings.Nodes.Count > 0)
+            {
+                Diagram.Delete(new DiagramObjectCollection<NodeBase>() { Diagram.SelectionSettings.Nodes[0] });
+            }
+            else if (Diagram.SelectionSettings.Connectors.Count > 0)
+            {
+                Diagram.Delete(new DiagramObjectCollection<NodeBase>() { Diagram.SelectionSettings.Connectors[0] });
+            }
+        }
+    }
+    /// <summary>
+    /// Event handler for the collection changed event.
+    /// </summary>
+    /// <param name="args">The event arguments containing information about the collection change.</param>
+
+    private void CollectionChanged(CollectionChangedEventArgs args)
+    {
+
+        if(args.Action == CollectionChangedAction.Remove)
+        {
+            diagramSelected = true;
+            Parent.DiagramPropertyPanel.PanelVisibility();
+            Parent.DiagramPropertyPanel.BindDiagramProperties();
+            StateHasChanged();
+        }
+        if (IsLoadingData)
+        {
+            Node? node = args.Element is Node ? args.Element as Node : null;
+            if (args.Element is Node element && element.Tooltip != null)
+            {
+                element.Tooltip = null;
+                element.Constraints &= ~NodeConstraints.Tooltip;
+            }
+            else if (args.Element is Connector connector1 && connector1.Type==ConnectorSegmentType.Bezier)
+            {
+                Node? sourceNode = Diagram.GetObject(connector1.SourceID) as Node;
+                Node? targetNode = Diagram.GetObject(connector1.TargetID) as Node;
+
+                PointPort? targetPort = null;
+                if(targetNode != null && targetNode.Ports.Count > 0)
+                {
+                    for(int j=0; j<targetNode.Ports.Count;j++)
+                    {
+                        if(targetNode.Ports[j].ID == connector1.TargetPortID)
+                        {
+                            targetPort = targetNode.Ports[j];
+                        }
+                    }
+                    if(targetPort!=null && targetPort.InEdges.Count>1)
+                    {
+                        Connector? removeConnector = Diagram.GetObject(connector1.ID) as Connector;
+                        if (removeConnector != null)
+                        {
+                            cancelSelection = true;
+                            Diagram.Connectors.Remove(removeConnector);
+                        }
+                    }
+                }
+                if (!string.IsNullOrEmpty(connector1.SourcePortID) && !string.IsNullOrEmpty(connector1.TargetPortID) && sourceNode!=null && sourceNode.AdditionalInfo != null)
+                {
+                    if(sourceNode.ID.IndexOf("Flop") != -1)
+                    {
+                        if(connector1.SourcePortID.IndexOf("q") != -1)
+                        {
+                            connector1.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", sourceNode.AdditionalInfo["BinaryState1"] } };
+                        }
+                        else if(connector1.SourcePortID.IndexOf("q1") != -1)
+                        {
+                            connector1.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", sourceNode.AdditionalInfo["BinaryState2"] } };
+                        }
+                    }
+                    else
+                    {
+                        connector1.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", sourceNode.AdditionalInfo["BinaryState"] } };
+                    }
+                    RunSimulation();
+                }
+                else
+                {
+                    Connector? connector = Diagram.GetObject(connector1.ID) as Connector;
+                    if(connector1 != null)
+                    {
+                        cancelSelection = true;
+                        Diagram.Connectors.Remove(connector1);
+                    }
+                }
+
+            }
+            if (node !=null && node.ID.IndexOf("Switch") != -1)
+            {
+                if (node is NodeGroup grpNode)
+                {
+                    for (int i = 0; i<grpNode.Children.Length; i++)
+                    {
+                        Node? child1 = Diagram.GetObject(grpNode.Children[i]) as Node;
+                        if (child1 != null && child1.ID==grpNode.Children[0])
+                        {
+                            child1.Ports.Add(AddPort("TogglePort123", 0.92, 0.5, false));
+                            child1.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", 0 }, { "ControlType", "InputControl" } };
+                            child1.Width += 20; child1.Height+=10;child1.OffsetX += 4;
+                        }
+                        else if (child1 != null && child1.ID==grpNode.Children[1])
+                        {
+                            child1.Width += 10; child1.Height+=10;
+                        }
+                        else if (child1 !=null)
+                        {
+                            child1.Width += 10; child1.Height+=13;
+                        }
+                    }
+
+                }
+
+            }
+            else if (node !=null && node.ID.IndexOf("Clock") != -1)
+            {
+
+                if (node is NodeGroup grpNode)
+                {
+
+                    for (int i = 0; i<grpNode.Children.Length; i++)
+                    {
+                        Node? child1 = Diagram.GetObject(grpNode.Children[i]) as Node;
+                        if (child1 != null && child1.ID==grpNode.Children[0])
+                        {
+                            child1.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", 0 }, { "ControlType", "InputControl" } };
+                            child1.Ports=new DiagramObjectCollection<PointPort>()
+                            {
+                                AddPort("ClkPort12", 0.92, 0.5, false),
+                            };
+                            child1.Width += 35; child1.Height+=5; child1.OffsetX +=3;
+                        }
+                        else if (child1 != null && child1.ID==grpNode.Children[1])
+                        {
+                            child1.Width += 18; child1.Height+=3; child1.OffsetX -= 3;
+                        }
+                    }
+
+                }
+
+            }
+            else if (node !=null && node.ID.IndexOf("Push") != -1)
+            {
+                if (node is NodeGroup grpNode)
+                {
+
+                    for (int i = 0; i<grpNode.Children.Length; i++)
+                    {
+                        Node? child1 = Diagram.GetObject(grpNode.Children[i]) as Node;
+                        if(child1!= null && child1.ID==grpNode.Children[0])
+                        {
+                            child1.Height += 10;
+                        }
+                        else if (child1 != null && child1.ID==grpNode.Children[1])
+                        {
+                            child1.Ports=new DiagramObjectCollection<PointPort>()
+                            {
+                                AddPort("push port", 0.92, 0.5, false),
+                            };
+                            child1.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", 0 }, { "ControlType", "InputControl" } };
+                            child1.Width += 34; child1.Height+=20;
+                        }
+                        else if (child1 != null && child1.ID==grpNode.Children[2])
+                        {
+                            child1.Width += 20; child1.Height+=17; child1.OffsetX -=7;
+                        }
+                        else if(child1 != null){
+                            child1.Width += 15; child1.Height+=13; child1.OffsetX -=7;
+                        }
+                    }
+
+                    grpNode.Style=new ShapeStyle()
+                    {
+                        Fill="#ffffff",
+                        Opacity=0,
+                        StrokeColor="#ffffff"
+                    };
+
+                }
+
+            }
+            else if (node !=null && node.ID.IndexOf("Low") != -1)
+            {
+                node.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", 0 }, { "ControlType", "InputControl" } };
+                node.Ports=new DiagramObjectCollection<PointPort>()
+                {
+                    AddPort("Low Port1", 0.92, 0.5, false),
+                };
+                node.Height = 60;
+                node.Width = 80;
+            }
+            else if (node !=null && node.ID.IndexOf("High") != -1)
+            {
+                node.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", 1 }, { "ControlType", "InputControl" } };
+                node.Ports=new DiagramObjectCollection<PointPort>()
+                {
+                    AddPort("High Port1", 0.92, 0.5, false),
+                };
+                node.Height = 60;
+                node.Width = 80;
+            }
+            else if (node !=null && (node.ID.IndexOf("Gate") != -1 || node.ID.IndexOf("Buffer") != -1))
+            {
+                node.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", 0 }, { "ControlType", "Gates" } };
+                if (node.ID.IndexOf("OR") != -1 || node.ID.IndexOf("NOR") != -1 || node.ID.IndexOf("XOR") != -1 || node.ID.IndexOf("XNOR") != -1)
+                {
+                    node.Ports = new DiagramObjectCollection<PointPort>()
+                    {
+                        AddPort("Or_port1", 0.05, 0.25, true),
+                        AddPort("Or_port2", 0.05, 0.73, true),
+                        AddPort("Or_port3", 0.94, 0.5, false),
+                    };
+                }
+                else if (node.ID.IndexOf("AND") != -1 || node.ID.IndexOf("NAND") != -1)
+                { 
+                    node.Ports = new DiagramObjectCollection<PointPort>()
+                    {
+                        AddPort("And_port1", 0.05, 0.25, true),
+                        AddPort("And_port2", 0.05, 0.73, true),
+                        AddPort("And_port3", 0.94, 0.5, false),
+
+                    };
+                }
+                else
+                {
+                    node.Ports = new DiagramObjectCollection<PointPort>()
+                    {
+                        AddPort("Not_Port1", 0.05, 0.5, true),
+                        AddPort("Not_Port2", 0.94, 0.5, false),
+                    };
+                }
+
+            }
+            else
+            {
+                SymbolPaletteDroppedSymbols(node);
+            }
+            
+            RunSimulation();
+        }
+        
+        
+    }
+    /// <summary>
+    /// This method is used to property change the dropped symbols from the palette.
+    /// </summary>
+    private void SymbolPaletteDroppedSymbols(Node node)
+    {
+        if (node !=null && node.ID.IndexOf("Flop") != -1)
+        {
+            node.AdditionalInfo = new Dictionary<string, object> { { "BinaryState1", 0 }, { "BinaryState2", 0 }, { "ControlType", "FlipFlop" } };
+            if (node.ID.IndexOf("JK") != -1)
+            {
+                node.Ports = new DiagramObjectCollection<PointPort>()
+                    {
+                        AddPort("JPort", 0.06, 0.350, true),
+                        AddPort("ClkPort", 0.06, 0.5, true),
+                        AddPort("KPort", 0.06, 0.650, true),
+                        AddPort("qPort", 0.95, 0.430, false),
+                        AddPort("q1Port", 0.95, 0.590, false),
+                        AddPort("PrePort", 0.5, 0.05, true),
+                        AddPort("ClrPort", 0.5, 0.95, true),
+                    };
+                node.Width=120;
+                node.Height = 120;
+            }
+            else if (node.ID.IndexOf("T")!=-1 || node.ID.IndexOf("D")!=-1)
+            {
+                node.Ports = new DiagramObjectCollection<PointPort>()
+                    {
+                        AddPort("DTPort", 0.053, 0.425, true),
+                        AddPort("ClkPort", 0.053, 0.590, true),
+                        AddPort("qPort", 0.947, 0.425, false),
+                        AddPort("q1Port", 0.947, 0.590, false),
+                        AddPort("PrePort", 0.5, 0.057, true),
+                        AddPort("ClrPort", 0.5, 0.93, true),
+                    };
+                node.Width=120;
+                node.Height = 120;
+            }
+            else if (node.ID.IndexOf("SR")!=-1)
+            {
+                node.Ports = new DiagramObjectCollection<PointPort>()
+                    {
+                        AddPort("SPort", 0.06, 0.25, true),
+                        AddPort("ClkPort", 0.06, 0.5, true),
+                        AddPort("RPort", 0.06, 0.75, true),
+                        AddPort("qPort", 0.95, 0.39, false),
+                        AddPort("q1Port", 0.95, 0.63, false),
+                    };
+                node.Width=100;
+                node.Height = 80;
+            }
+        }
+        else if (node !=null && node.ID.IndexOf("Bus") != -1)
+        {
+            node.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", 0 }, { "ControlType", "OtherControl" } };
+
+            node.Ports = new DiagramObjectCollection<PointPort>()
+                {
+                    AddPort("Other_Port1", 0.06, 0.30, true),
+                    AddPort("Other_Port3", 0.06, 0.70, true),
+                    AddPort("Other_Port4", 0.94, 0.48, false),
+                };
+            node.Width = 100;
+            node.Height = 50;
+        }
+        else if (node !=null && node.ID.IndexOf("Pull") != -1)
+        {
+            node.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", 0 }, { "ControlType", "OtherControl" } };
+
+            node.Ports = new DiagramObjectCollection<PointPort>()
+                {
+                    AddPort("Pull_Port1", 0.06, 0.48, true),
+                    AddPort("Pull_Port2", 0.94, 0.48, false),
+
+                };
+            node.Width = 100;
+            node.Height = 50;
+        }
+        else if (node !=null && node.ID.IndexOf("Bulb") != -1)
+        {
+            node.Width = 40;
+            node.Height = 50;
+            if (node is NodeGroup grpNode)
+            {
+                for (int i = 0; i<grpNode.Children.Length; i++)
+                {
+                    Node? child1 = Diagram.GetObject(grpNode.Children[i]) as Node;
+                    if (child1 != null && child1.ID==grpNode.Children[0])
+                    {
+                        child1.AdditionalInfo = new Dictionary<string, object> { { "BinaryState", 0 }, { "ControlType", "OutputControl" } };
+                        child1.Ports.Add(AddPort("Bulb_Port", 0.5, 0.95, true));
+                        child1.Width += 8; child1.Height+=26; child1.OffsetY += 1.5;
+                    }
+                    else if (child1 != null && child1.ID==grpNode.Children[1])
+                    {
+                        child1.Width += 6; child1.Height+=6; child1.OffsetY += 1.5;
+                    }
+                    else if (child1 != null && child1.ID==grpNode.Children[2])
+                    {
+                        child1.Width += 10; child1.Height+=10;
+                    }
+                    else if (child1 != null && child1.ID==grpNode.Children[3])
+                    {
+                        child1.Height+=4; child1.OffsetX += 0.4; child1.OffsetY -= 2.2;
+                    }
+                }
+            }
+
+        }
+        else if (node !=null && node.ID.IndexOf("Digit") != -1)
+        {
+            node.AdditionalInfo = new Dictionary<string, object> { { "BinaryState1", 0 }, { "BinaryState2", 0 }, { "BinaryState3", 0 }, { "BinaryState4", 0 }, { "ControlType", "OutputControl" } };
+
+            node.Ports = new DiagramObjectCollection<PointPort>()
+                {
+                    AddPort("DigitPort1", 0.07, 0.15, true),
+                    AddPort("DigitPort2", 0.07, 0.38, true),
+                    AddPort("DigitPort3", 0.071, 0.62, true),
+                    AddPort("DigitPort4", 0.072, 0.85, true)
+                };
+            node.Width = 80;
+            node.Height = 80;
+        }
+        else if (node !=null && node.ID.IndexOf("Label") != -1)
+        {
+            node.Width = 80;
+            node.Height = 40;
+            node.Style = new TextStyle()
+                {
+                    Fill = "white",
+                    Color = "black"
+
+                };
+        }
+    }
+}

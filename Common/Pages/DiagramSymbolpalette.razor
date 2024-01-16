@@ -1,0 +1,161 @@
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Diagram
+@using Syncfusion.Blazor.Diagram.SymbolPalette
+@using System.Collections.ObjectModel
+@using LogicCircuit.Shared
+
+@namespace LogicCircuit
+
+<div class="db-palette-parent">
+
+    <SfSymbolPaletteComponent @ref="@PaletteInstance" Width="100%" Height="100%" GetSymbolInfo="GetSymbolInfo"
+                     Palettes="@Palettes" SymbolDragPreviewSize="@SymbolPreview" SymbolMargin="@SymbolMargin">
+        
+    </SfSymbolPaletteComponent>
+</div>
+
+@code {
+    internal DiagramLeftSideBar? Parent { get; set; }
+
+    SfSymbolPaletteComponent? PaletteInstance { get; set; }
+    DiagramMainContent Data{ get; set; }
+    /// <summary>
+    /// Gets or sets the symbol preview size for an item in the Symbol Palette.
+    /// </summary>
+
+    DiagramSize SymbolPreview = new DiagramSize();
+    /// <summary>
+    /// Gets or sets the symbol preview margin for an item in the Symbol Palette.
+    /// </summary>
+    SymbolMargin SymbolMargin = new SymbolMargin { Left = 10, Right = 10, Top = 10, Bottom = 10 };
+    /// <summary>
+    /// Gets or sets the symbol width for an item in the Symbol Palette.
+    /// </summary>
+    double symbolSizeWidth;
+    /// <summary>
+    /// Gets or sets the symbol height for an item in the Symbol Palette.
+    /// </summary>
+    double symbolSizeHeight;
+    /// <summary>
+    /// Reference to the palettes in the symbol palette
+    /// </summary>
+    DiagramObjectCollection<Palette>? Palettes { get; set; }
+    /// <summary>
+    /// Gets or sets the input control palette for the element.
+    /// </summary>
+    private Palette? InputPalette { get; set; }
+    /// <summary>
+    /// Gets or sets the output control palette for the element.
+    /// </summary>
+    private Palette? OutputControlPalettee { get; set; }
+    /// <summary>
+    /// Gets or sets the logic symbols palette for the element.
+    /// </summary>
+    private Palette? LogicGates { get; set; }
+    /// <summary>
+    /// Gets or sets the flip flop symbols palette for the element.
+    /// </summary>
+    private Palette? FlipFlops { get; set; }
+    /// <summary>
+    /// Gets or sets the other palette items for the element.
+    /// </summary>
+    private Palette? OtherPalette { get; set; }
+    /// <summary>
+    /// Gets or sets the collection of input symbols associated with the element.
+    /// </summary>
+    private DiagramObjectCollection<NodeBase> InputSymbols { get; set; } = new DiagramObjectCollection<NodeBase>();
+    /// <summary>
+    /// Gets or sets the collection of output symbols associated with the element.
+    /// </summary>
+    private DiagramObjectCollection<NodeBase> OutputSymbols { get; set; } = new DiagramObjectCollection<NodeBase>();
+    /// <summary>
+    /// Gets or sets the collection of logic symbols associated with the element.
+    /// </summary>
+    private DiagramObjectCollection<NodeBase> LogicSymbols { get; set; } = new DiagramObjectCollection<NodeBase>();
+    /// <summary>
+    /// Gets or sets the collection of flip flop symbols associated with the element.
+    /// </summary>
+    private DiagramObjectCollection<NodeBase> FlipFlopSymbols { get; set; } = new DiagramObjectCollection<NodeBase>();
+    /// <summary>
+    /// Gets or sets the collection of other symbols associated with the element.
+    /// </summary>
+    private DiagramObjectCollection<NodeBase> OtherSymbols { get; set; } = new DiagramObjectCollection<NodeBase>();
+
+    /// <summary>
+    /// Called when the component is initialized.
+    /// </summary>
+    /// <remarks>
+    /// This method is invoked during the initialization phase of the component's lifecycle.
+    /// Override this method to perform any initialization logic for the component.
+    /// </remarks>
+    protected override void OnInitialized()
+    {
+        SymbolPreview = new DiagramSize();
+        SymbolPreview.Width = 50;
+        SymbolPreview.Height = 50;
+        //Initializes the palette
+        InitializePalettes();
+        InputPalette = new Palette() { Symbols = InputSymbols, Title = "Input Controls", ID = "InputControls", IconCss = "e-ddb-icons e-flow" };
+        OutputControlPalettee = new Palette() { Symbols = OutputSymbols, Title = "Output Controls", ID = "OutputControls", IconCss = "e-ddb-icons e-flow" };
+        LogicGates = new Palette() { Symbols = LogicSymbols, Title = "Logic Gates", ID = "LogicGates", IconCss = "e-ddb-icons e-flow" };
+        FlipFlops = new Palette() { Symbols = FlipFlopSymbols, Title = "Flip Flops", ID = "flipflops", IconCss = "e-ddb-icons e-flow" };
+        OtherPalette = new Palette() { Symbols = OtherSymbols, Title = "Other", ID = "otherSymbols", IconCss = "e-ddb-icons e-flow" };
+        Palettes = new DiagramObjectCollection<Palette>();
+        if (Palettes != null && InputPalette != null)
+        {
+            Palettes.Add(InputPalette);
+            Palettes.Add(OutputControlPalettee);
+            Palettes.Add(LogicGates);
+            Palettes.Add(FlipFlops);
+            Palettes.Add(OtherPalette);
+        }
+    }
+    /// <summary>
+    /// Called after the component has been rendered.
+    /// </summary>
+    /// <remarks>
+    /// This method is invoked after the component has been rendered, and it is useful for performing tasks that depend on the rendered state of the component.
+    /// The parameter <paramref name="firstRender"/> is true on the first render and false on subsequent renders.
+    /// </remarks>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (PaletteInstance != null)
+        {
+            PaletteInstance.Targets = new DiagramObjectCollection<SfDiagramComponent>() { };
+        }
+        var diagramContent = Parent?.Parent?.DiagramContent;
+        if (diagramContent != null)
+        {
+            if (PaletteInstance != null)
+            {
+                PaletteInstance.Targets.Add(diagramContent.Diagram);
+            }
+        }
+        if (firstRender)
+        {         
+            await Task.Delay(1).ConfigureAwait(true);
+        }
+    }
+    /// <summary>
+    /// This method provides the symbol information
+    /// </summary>
+
+    private SymbolInfo GetSymbolInfo(IDiagramObject symbol)
+    {
+        SymbolInfo SymbolInfo = new SymbolInfo();
+        SymbolInfo.Fit = true;
+
+        string? text = null;
+        if (symbol != null)
+        {
+            if (symbol is Node node && node.Tooltip!=null)
+            {
+                text = node.Tooltip.Content;
+            }
+            else if (symbol is Node nodeID && nodeID.ID != "Label")
+                text = nodeID.ID;
+        }
+        SymbolInfo.Description = new SymbolDescription() { Text = text, TextWrapping = TextWrap.NoWrap, };
+        return SymbolInfo;
+    }
+}

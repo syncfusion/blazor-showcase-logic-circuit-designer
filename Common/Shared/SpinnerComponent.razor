@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Routing;
+@using Syncfusion.Blazor.Spinner;
+@inject IJSRuntime JsRuntime;
+@namespace LogicCircuit.Shared
+
+<div class="sb-body-overlay @HideClass @TransClass">
+    <div id="loader" class="sb-loading @HideInnerClass">
+        <SfSpinner Size="40" Type="SpinnerType.Bootstrap4" Visible="true"></SfSpinner>
+    </div>
+</div>
+
+@code {
+    internal MainLayout? Parent;
+
+    [Parameter]
+    public string? HideClass { get; set; }
+
+    [Parameter]
+    public string? HideInnerClass { get; set; }
+
+    [Parameter]
+    public string? TransClass { get; set; }
+
+    private bool VisibleProperty { get; set; } = true;
+
+    public void ShowasTrans()
+    {
+
+        this.TransClass = "sb-trans";
+        this.HideClass = string.Empty;
+        this.StateHasChanged();
+    }
+
+    public void Show()
+    {
+
+        this.TransClass = string.Empty;
+        HideClass = string.Empty;
+        this.HideInnerClass = string.Empty;
+        this.StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        TransClass = string.Empty;
+        HideClass = "sb-hide";
+        this.HideInnerClass = "sb-hide";
+        this.StateHasChanged();
+    }
+}
+
