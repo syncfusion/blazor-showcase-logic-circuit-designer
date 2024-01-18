@@ -186,7 +186,9 @@
             }
         }
     }
-
+    /// <summary>
+    /// Handles the change event when the diagram name is edited.
+    /// </summary>
     private void diagramNameChange( Microsoft.AspNetCore.Components.Web.FocusEventArgs args)
     {
         diagramName = value;
@@ -335,7 +337,9 @@
         public Boolean Separator { get; set; } = false;
         public Boolean Disabled { get; set; } = false;
     }
-
+    /// <summary>
+    /// Represents a list of context menu items for editing operations.
+    /// </summary>
     internal List<  ContextMenuItemModel> EditMenuItems = new List<  ContextMenuItemModel>
 {
     new   ContextMenuItemModel {Id ="EditMenuItemsUndo", Text= "Undo", IconCss="sf-icon-Undo" },
@@ -359,7 +363,9 @@
     new   ContextMenuItemModel { Separator= true },
 
 };
-
+    /// <summary>
+    /// Represents a list of context menu items for DesignMenuItems operations.
+    /// </summary>
     public List<ContextMenuItemModel> DesignMenuItems = new List<ContextMenuItemModel>
 {
       new   ContextMenuItemModel
@@ -394,7 +400,9 @@
 
      },
 };
-
+    /// <summary>
+    /// Represents a list of context menu items for Select menu operations.
+    /// </summary>
     private List<ContextMenuItemModel> SelectMenuItems = new List<ContextMenuItemModel>
     {
           new   ContextMenuItemModel { Id ="SelectMenuItemsSelectAll",Text= "Select All", IconCss = "sf-icon-blank" },
@@ -402,6 +410,9 @@
           new   ContextMenuItemModel { Id ="SelectMenuItemsSelectAllConnectors",Text= "Select All Connectors", IconCss = "sf-icon-blank" },
             new   ContextMenuItemModel { Id ="SelectMenuItemsDeSelectAll",Text= "Deselect All", IconCss = "sf-icon-blank" },
     };
+    /// <summary>
+    /// Represents a list of context menu items for Tools menu operations.
+    /// </summary>
     public List<ContextMenuItemModel> ToolsMenuItems = new List<ContextMenuItemModel>
     {
           new   ContextMenuItemModel { Id ="ToolsMenuItemsSelection",Text= "Selection Tool", IconCss = "sf-icon-Selector" },
@@ -410,7 +421,9 @@
 
     };
 
-
+    /// <summary>
+    /// Represents a list of context menu items for Files operations.
+    /// </summary>
     private List<  ContextMenuItemModel> FileMenuItems = new List<  ContextMenuItemModel>
 {
     new   ContextMenuItemModel {Id ="FileMenuItemsNew", Text = "New", IconCss = "sf-icon-circle-add" },
@@ -423,6 +436,9 @@
     new   ContextMenuItemModel { Id ="FileMenuItemsPrint",Text = "Print",  IconCss="sf-icon-Print" }
 
 };
+    /// <summary>
+    /// Represents a list of context menu items for View menu operations.
+    /// </summary>
     public List<  ContextMenuItemModel> ViewMenuItems = new List<  ContextMenuItemModel>
     {
                  new   ContextMenuItemModel { Text="Show Grid" ,IconCss="sf-icon-Selection"},
@@ -436,7 +452,9 @@
 
 
     };      
-
+    /// <summary>
+    /// Invoked after the component has been rendered.
+    /// </summary>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
@@ -978,7 +996,9 @@
         }
         return Paper;
     }
-
+    /// <summary>
+    /// Represents the dimensions of a paper size, including width and height.
+    /// </summary>
     public class PaperSize
     {
         public double PageWidth { get; set; }
@@ -1259,7 +1279,9 @@
         return false;
 
     }
-    
+    /// <summary>
+    /// Notifies the component that its state has changed and requests a re-render.
+    /// </summary>
     public void StateChanged()
     {
         StateHasChanged();

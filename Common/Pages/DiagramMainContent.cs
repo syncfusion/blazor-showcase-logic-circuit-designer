@@ -30,10 +30,17 @@ namespace LogicCircuit
         /// Gets or sets the initial timer value for clock node
         /// </summary>
         public int timerValue = 3000;
+        /// <summary>
+        /// Gets or sets the SfDiagramComponent associated with this instance.
+        /// </summary>
         public SfDiagramComponent Diagram { get; set; }
-
+        /// <summary>
+        /// Gets or sets the parent DiagramMain associated with this instance.
+        /// </summary>
         public DiagramMain Parent { get; set; }
-        
+        /// <summary>
+        /// Gets or sets the DotNetObjectReference associated with this instance.
+        /// </summary>
         public DotNetObjectReference<DiagramMainContent>? objRef;
         public DiagramMainContent()
         {
@@ -44,14 +51,22 @@ namespace LogicCircuit
             Parent = parent;
             this.Diagram = new SfDiagramComponent();
         }
-
+        /// <summary>
+        /// Invoked when component parameters are set.
+        /// </summary>
+        /// <returns>A Task representing the asynchronous operation.</returns>
         protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync().ConfigureAwait(true);
             Parent?.InitializeDiagraMainContent(this);
 
         }
-
+        /// <summary>
+        /// This method is called when the component has been initialized.
+        /// </summary>
+        /// <remarks>
+        /// Override this method to perform initialization logic after the component has been rendered on the initial render.
+        /// </remarks>
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();

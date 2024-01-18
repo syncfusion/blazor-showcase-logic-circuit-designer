@@ -378,7 +378,9 @@
         public double ZoomFactor { get; set; }
         public string Type { get; set; } = "";
     }
-
+    /// <summary>
+    /// Notifies the component that its state has changed and requests a re-render.
+    /// </summary>
     public void StateChanged()
     {
         StateHasChanged();
