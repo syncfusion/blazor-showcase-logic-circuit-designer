@@ -95,20 +95,6 @@ function loadFile(file) {
     var json = atob(base64)
     return json;
 }
-function loadCSVFile(file) {
-
-    var base64 = file.rawFile.replace("data:text/csv;base64,", "");
-    var json = atob(base64)
-    return json;
-
-}
-function loadXMLFile(file) {
-
-    var base64 = file.rawFile.replace("data:text/xml;base64,", "");
-    var json = atob(base64) 
-    return json;
-
-}
 
 function diagramNameKeyDown(args) {
     if (args.which === 13) {

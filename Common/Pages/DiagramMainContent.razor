@@ -155,7 +155,9 @@
     public double[] SnapIntervals { get; set; } = new double[] {
             1, 9, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75
     }; 
-
+    /// <summary>
+    /// Gets or sets the property to show the spinner component.
+    /// </summary>
     public bool show = true;
     /// <summary>
     /// Property used to indicate when a diagram element is selected or deselected.
@@ -178,10 +180,20 @@
         }
     };
 
-
+    /// <summary>
+    /// Gets or sets the Horizontal grid values for the diagram gridlines
+    /// </summary>
     public double[] HDotIntervals { get; set; } = new double[] { 1, 19, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, };
+    /// <summary>
+    /// Gets or sets the vertical grid values for the diagram gridlines
+    /// </summary>
     public double[] VDotIntervals { get; set; } = new double[] { 1, 19, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, };
-
+    /// <summary>
+    /// This method is called when the component has been initialized.
+    /// </summary>
+    /// <remarks>
+    /// Override this method to perform initialization logic after the component has been rendered on the initial render.
+    /// </remarks>
     protected override void OnInitialized()
     {
         Connector bezierConnector = new Connector()
@@ -198,7 +210,9 @@
         InitDiagramModel();   
         UpdateSelectorHandle();
     }
-
+    /// <summary>
+    /// Asynchronously handles notifications based on the provided NotifyProperties.
+    /// </summary>
     public async Task OnNotify(NotifyProperties prop)
     {
         await InvokeAsync(() =>
@@ -208,6 +222,11 @@
             }
         });
     }
+    /// <summary>
+    /// Invoked after the component has been rendered.
+    /// </summary>
+    /// <param name="firstRender">A boolean indicating whether this is the first render of the component.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
@@ -433,7 +452,6 @@
 
     private void CollectionChanged(CollectionChangedEventArgs args)
     {
-
         if(args.Action == CollectionChangedAction.Remove)
         {
             diagramSelected = true;
@@ -502,7 +520,6 @@
                         Diagram.Connectors.Remove(connector1);
                     }
                 }
-
             }
             if (node !=null && node.ID.IndexOf("Switch") != -1)
             {
@@ -526,13 +543,10 @@
                             child1.Width += 10; child1.Height+=13;
                         }
                     }
-
                 }
-
             }
             else if (node !=null && node.ID.IndexOf("Clock") != -1)
             {
-
                 if (node is NodeGroup grpNode)
                 {
 
@@ -553,9 +567,7 @@
                             child1.Width += 18; child1.Height+=3; child1.OffsetX -= 3;
                         }
                     }
-
                 }
-
             }
             else if (node !=null && node.ID.IndexOf("Push") != -1)
             {
@@ -595,7 +607,6 @@
                     };
 
                 }
-
             }
             else if (node !=null && node.ID.IndexOf("Low") != -1)
             {
@@ -636,7 +647,6 @@
                         AddPort("And_port1", 0.05, 0.25, true),
                         AddPort("And_port2", 0.05, 0.73, true),
                         AddPort("And_port3", 0.94, 0.5, false),
-
                     };
                 }
                 else
@@ -647,7 +657,6 @@
                         AddPort("Not_Port2", 0.94, 0.5, false),
                     };
                 }
-
             }
             else
             {
@@ -656,8 +665,6 @@
             
             RunSimulation();
         }
-        
-        
     }
     /// <summary>
     /// This method is used to property change the dropped symbols from the palette.

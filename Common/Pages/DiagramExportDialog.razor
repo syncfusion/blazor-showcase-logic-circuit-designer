@@ -160,9 +160,13 @@
         /// </summary>
         PDF
     }
-
+    /// <summary>
+    /// Gets or sets an IEnumerable collection of string values representing the names of the Regions enum.
+    /// </summary>
     public IEnumerable<string> RegionValues = Enum.GetNames(typeof(Regions));
-
+    /// <summary>
+    /// Gets or sets the current value of the Regions enum, representing the current region setting.
+    /// </summary>
     public Regions CurrentRegionValue { get; set; } = Regions.PageSettings;
     /// <summary>
     /// Specifies the region that has to be fit within the viewport.
