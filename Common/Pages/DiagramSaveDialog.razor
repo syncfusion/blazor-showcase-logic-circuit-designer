@@ -1,0 +1,68 @@
+﻿@using Syncfusion.Blazor.Popups
+
+@inject IJSRuntime jsRuntime
+@namespace LogicCircuit
+
+<SfDialog @ref="@SaveDialog" @bind-Visible="@SaveDialogVisible" AllowDragging="true" Width="335px" ShowCloseIcon="true">
+    <DialogTemplates>
+        <Header>Save Diagram</Header>
+        <Content>
+            <div id="saveDialogContent">
+                <div class="row">
+                    <div class="row">File Name</div><div class="row db-dialog-child-prop-row">
+                       <input type="text" id="saveFileName" value="@DiagramfileName">
+                    </div>
+                </div>
+            </div>
+        </Content>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@DialogEffect.None"></DialogAnimationSettings>
+    <DialogButtons>
+        <DialogButton OnClick="@BtnSave" Content="Save" CssClass="e-flat e-db-primary" IsPrimary="true">
+        </DialogButton>
+        <DialogButton OnClick="@btnCancelClick" Content="Cancel" CssClass="e-flat">
+        </DialogButton>
+    </DialogButtons>
+</SfDialog>
+
+@code {
+    internal DiagramMenuBar? Parent;
+
+    /// <summary>
+    /// Gets or sets the file name associated with the diagram.
+    /// </summary>
+
+    public string DiagramfileName = "Diagram1";
+    public SfDialog? SaveDialog;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the save dialog is visible.
+    /// </summary>
+
+    public bool SaveDialogVisible = false;
+    /// <summary>
+    /// This method is used to save the current diagram
+    /// </summary>  
+    private async Task BtnSave()
+    {
+        string fileName = await jsRuntime.InvokeAsync<string>("getDiagramFileName", "save");
+        if (Parent != null)
+        {
+            await Parent.Download(fileName);
+        }
+        if (SaveDialog != null)
+        {
+            await SaveDialog.HideAsync();
+        }
+    }
+    /// <summary>
+    /// This method closes the save dialog box
+    /// </summary>
+    private async Task btnCancelClick()
+    {
+        if (SaveDialog != null)
+        {
+            await SaveDialog.HideAsync();
+        }
+    }
+}

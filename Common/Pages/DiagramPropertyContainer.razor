@@ -1,0 +1,593 @@
+@using Syncfusion.Blazor.Buttons
+@using System.Collections.Generic
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Diagram
+@using Syncfusion.Blazor.Popups
+@using System.Collections.ObjectModel
+@using Syncfusion.Blazor.SplitButtons
+@using Newtonsoft.Json.Linq
+@using System.Drawing
+
+
+@using LogicCircuit.Shared
+@namespace LogicCircuit
+
+@code {
+   
+   
+    public DiagramMain Parent { get; set; }
+    /// <summary>
+    /// Reference to the node opacity Slider
+    /// </summary>
+    SfSlider<double>? SfSlide;
+    /// <summary>
+    /// Reference to the text opacity Slider
+    /// </summary>
+    SfSlider<double>? OpacitySfSlide;
+
+    /// <summary>
+    /// Gets or sets the visibility of diagram property panel which contains the details about the page settings
+    /// </summary>
+    public string DiagramPropertyVisibility { get; set; } = "block";
+    /// <summary>
+    /// Gets or sets the visibility of node property panel
+    /// </summary>
+    public string NodePropertyVisibility { get; set; } = "none";
+    /// <summary>
+    /// Gets or sets the visibility of connector property panel
+    /// </summary>
+    public string ConnectorPropertyVisibility { get; set; } = "none";
+    /// <summary>
+    /// Gets or sets the visibility of text property panel
+    /// </summary>
+    public string TextPropertyVisibility { get; set; } = "none";
+    /// <summary>
+    /// Gets or sets the visibility of annotation property panel
+    /// </summary>
+    public string AnnotationPropertyVisibility { get; set; } = "block";
+    /// <summary>
+    /// Gets or sets the css class name to display the bridge space
+    /// </summary>
+    public string lineJumpSizeDivDisplay { get; set; } = "none";
+
+    /// <summary>
+    /// Gets or sets the CSS class name for displaying gradient styles to the diagram elements.
+    /// </summary>
+    public string  gradientStyleClass { get; set; } = "row db-prop-row db-gradient-style-hide";
+
+    /// <summary>
+    /// Gets or sets the CSS class name for displaying portrait button style.
+    /// </summary>
+    public string portraitStyleClass { get; set; } = "e-control e-btn e-lib e-flat e-primary";
+
+
+    /// <summary>
+    /// Gets or sets the CSS class name for displaying aspect ratio button style.
+    /// </summary>
+    public string aspectRatioCssClass { get; set; } = "e-control e-btn e-lib e-icon-btn";
+
+    /// <summary>
+    /// Gets or sets the CSS class name for displaying portrait button style.
+    /// </summary>
+    public string landscapeStyleClass { get; set; } = "e-control e-btn e-lib e-flat e-primary e-active";
+
+    /// <summary>
+    /// Gets or sets a value indicating whether gradient styles are visible for diagram elements.
+    /// </summary>
+    public string gradientVisibility { get; set; } = "";
+    /// <summary>
+    /// Reference to the reference gradient style id
+    /// </summary>
+    public string gradientStyleId { get; set; } = "gradientStyle";   
+    public string lineJumpSizeDiv { get; set; } = "lineJumpSizeDiv";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling the node panel in the property panel.
+    /// </summary>
+    public string nodePanelClass { get; set; } = "db-node-prop-container";
+
+    /// <summary>
+    /// Gets or sets the hyperlink value
+    /// </summary>
+
+    public string ValueLink { get; set; } = "";
+    /// <summary>
+    /// Gets or sets the hyperlink text
+    /// </summary>
+    public string ValueText { get; set; } = "";
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the page dimensions panel should be visible in property panel
+    /// </summary>
+    public string PageDimensionVisibility { get; set; } = "none";
+    /// <summary>
+    /// Gets or sets a value indicating whether the page orientation panel should be visible in property panel
+    /// </summary>
+    public string PageOrientationVisibility { get; set; } = "";
+    /// <summary>
+    /// Gets or sets the page portrait value
+    /// </summary>
+    public string PagePortrait { get; set; } = "";
+    public string PageLandscape { get; set; } = "";
+
+    /// <summary>
+    /// Gets or sets the CSS class name for enable/disable the aspect ratio button
+    /// </summary>
+
+    private string AspectRatioIcon = "sf-icon-Unlock";
+    private Dictionary<string, object> primButton = new Dictionary<string, object>()
+    {
+        { "title", "Enable Aspect Ratio"}
+    };
+
+    [Inject]
+    protected IJSRuntime? jsRuntime { get; set; }
+
+    SfDialog? TextHyperLink;
+
+    // Page Settings
+    #region
+
+    /// <summary>
+    /// Represents a class that defines fields for paper list items in the diagram.
+    /// </summary>
+    public class PaperListFields
+    {
+        public string Value { get; set; } = "";
+        public string Text { get; set; } = "";
+    }
+    /// <summary>
+    /// Gets or sets a list of paper list items available in the diagram.
+    /// </summary>
+    public List<PaperListFields> PaperList = new List<PaperListFields>()
+    {
+        new PaperListFields(){ Text= "Letter (8.5 in x 11 in)", Value= "Letter", },
+        new PaperListFields(){ Text= "Legal (8.5 in x 14 in)", Value= "Legal" },
+        new PaperListFields(){ Text= "Tabloid (11 in x 17 in)", Value="Tabloid" },
+        new PaperListFields(){ Text= "A3 (11.7 in x 16.53 in)", Value="A3" },
+        new PaperListFields(){ Text= "A4 (8.27 in x 11.7 in)", Value="A4" },
+        new PaperListFields(){ Text= "A5 (5.82 in x 8.27 in)", Value="A5" },
+        new PaperListFields(){ Text= "A6 (4.1 in x 5.8 in)", Value="A6" },
+        new PaperListFields(){ Text= "Custom", Value="Custom"}
+    };
+    #endregion
+
+
+
+    
+
+    #region
+    /// <summary>
+    /// Gets or sets the CSS class name for styling bold icon in the property panel
+    /// </summary>
+    public string BoldCss = "tb-item-start";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling itlaic icon in the property panel
+    /// </summary>
+    public string ItalicCss = "tb-item-middle";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling underline icon in the property panel
+    /// </summary>
+    public string UnderlineCss = "tb-item-end";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling align left icon in the property panel
+    /// </summary>
+    public string AlignTextLeftCss = "tb-item-start";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling align centre icon in the property panel
+    /// </summary>
+    public string AlignTextCenterCss = "tb-item-middle";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling align right icon in the property panel
+    /// </summary>
+    public string AlignTextRightCss = "tb-item-end";
+
+    /// <summary>
+    /// Gets or sets the CSS class name for styling horizontal alignment right icon in the property panel
+    /// </summary>
+    public string HorAlignRightCss = "tb-item-start";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling horizontal alignment centre icon in the property panel
+    /// </summary>
+    public string HorAlignCenterCss = "tb-item-middle";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling horizontal alignment left icon in the property panel
+    /// </summary>
+    public string HorAlignLeftCss = "tb-item-middle";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling vertical alignment bottom icon in the property panel
+    /// </summary>
+    public string VerAlignBottomCss = "tb-item-middle";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling vertical alignment middle icon in the property panel
+    /// </summary>
+    public string VerAlignMiddleCss = "tb-item-middle";
+    /// <summary>
+    /// Gets or sets the CSS class name for styling vertical alignment top icon in the property panel
+    /// </summary>
+    public string VerAlignTopCss = "tb-item-end";
+
+
+    /// <summary>
+    /// A property used to prevent specific properties from being changed in the diagram.
+    /// </summary>
+    public bool PreventPropertyChange { get; set; }
+
+    // Diagram Properties
+    /// <summary>
+    /// Gets or sets the selected paper size value for the diagram.
+    /// </summary>
+    public string PaperListValue { get; set; } = "Letter";
+    /// <summary>
+    /// Gets or sets the value that indicates whether the diagram's page orientation is set to portrait mode.
+    /// </summary>
+    public bool PagePortraitValue { get; set; } = false;
+    /// <summary>
+    /// Gets or sets the value that indicates whether the diagram's page orientation is set to landscape mode.
+    /// </summary>
+    public bool PageLandscapeValue { get; set; } = true;
+    /// <summary>
+    /// Gets or sets the background color for the diagram.
+    /// </summary>
+    public string PageBgColorValue { get; set; } = "#ffffffff";
+    /// <summary>
+    /// Gets or sets the value that indicates whether the diagram's page break should be visible
+    /// </summary>
+    public bool ShowPageBreaksValue { get; set; } = false;
+    /// <summary>
+    /// Gets or sets the page width for the diagram.
+    /// </summary>
+    public double PageWidth { get; set; } = 1056;
+    /// <summary>
+    /// Gets or sets the page height for the diagram.
+    /// </summary>
+    public double PageHeight { get; set; } = 816;
+    /// <summary>
+    /// Gets or sets the portarait radio button value.
+    /// </summary>
+    public string PortraitRadioButtonValue { get; set; } = "false";
+    /// <summary>
+    /// Gets or sets the landscape radio button value.
+    /// </summary>
+    public string LandscapeRadioButtonValue { get; set; } = "true";
+
+    #endregion
+    /// <summary>
+    /// Initializes the component.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        PageLandscape= PageLandscapeValue.ToString();
+        PagePortrait = PagePortraitValue.ToString();
+    }
+    /// <summary>
+    /// Notifies the component that its state has changed and requests a re-render.
+    /// </summary>
+    public void StateChanged()
+    {
+        StateHasChanged();
+    } 
+
+    public async void slider()
+    {
+        if (SfSlide != null)
+        {
+            await SfSlide.RepositionAsync();
+        }
+        StateHasChanged();
+    }
+    public async void sliderConnector()
+    {
+        if (OpacitySfSlide != null)
+        {
+            await OpacitySfSlide.RepositionAsync();
+        }
+        StateHasChanged();
+    }
+    
+    /// <summary>
+    /// This method is used to display the property panel items based on the selected items.
+    /// </summary>
+    public void PanelVisibility(){
+
+        SfDiagramComponent Diagram = Parent.DiagramContent.Diagram;
+        NodePropertyVisibility = "none";
+        ConnectorPropertyVisibility = "none";
+        DiagramPropertyVisibility = "none";
+        TextPropertyVisibility = "none";
+        if(Parent.DiagramContent.Diagram.SelectionSettings.Nodes.Count>0 ) {
+            NodePropertyVisibility = "block";
+            //NodeRotateAngle = Diagram.SelectionSettings.Nodes[0].RotationAngle;
+           
+        }
+        else if (Parent.DiagramContent.Diagram.SelectionSettings.Connectors.Count > 0 )
+        {
+            ConnectorPropertyVisibility="block";
+            
+        }
+        else
+        {
+            DiagramPropertyVisibility = "block";
+            BindDiagramProperties();
+        }
+        StateHasChanged();
+    }
+    
+    /// <summary>
+    ///This method is used to bind the page settings to the diagram component
+    /// </summary>
+
+    public void BindDiagramProperties()
+    {
+        SfDiagramComponent Diagram = Parent.DiagramContent.Diagram;
+        PageSettings PageSettings = Parent.DiagramContent.Diagram.PageSettings;
+        PagePortraitValue = (PageSettings.Orientation == PageOrientation.Portrait) ? true : false;
+        PageLandscapeValue = (PageSettings.Orientation == PageOrientation.Landscape) ? true : false;
+        if (!PageSettings.Background.Background.Contains("#"))
+        {
+            int ColorValue = Color.FromName(PageSettings.Background.Background).ToArgb();
+            string ColorHex = string.Format("{0:x6}", ColorValue);
+            PageBgColorValue = "#" + ColorHex.Substring(2);
+        }
+        else
+        {
+            PageBgColorValue = PageSettings.Background.Background;
+        }
+        ShowPageBreaksValue = PageSettings.ShowPageBreaks;
+    }
+    
+    /// <summary>
+    /// Retrieves the selected nodes from the diagram.
+    /// </summary>
+    /// <returns>
+    /// An ObservableCollection containing the selected nodes.
+    /// </returns>
+    public ObservableCollection<Node> OnSelectedNode()
+    {
+        ObservableCollection<Node> NodesCollection = new ObservableCollection<Node>();
+        SfDiagramComponent Diagram = Parent.DiagramContent.Diagram;
+        DiagramSelectionSettings SelectedItems = Diagram.SelectionSettings;
+        for (int i = 0; i < SelectedItems.Nodes.Count; i++)
+        {
+            Node? node = Diagram.GetObject(SelectedItems.Nodes[i].ID) as Node;
+            if (node != null)
+            {
+                NodesCollection.Add(node);
+            }
+        }
+        return NodesCollection;
+    }
+
+    /// <summary>
+    /// Retrieves the selected connectors from the diagram.
+    /// </summary>
+    /// <returns>
+    /// An ObservableCollection containing the selected connectors.
+    /// </returns>
+    public ObservableCollection<Connector> OnSelectedConnector()
+    {
+        ObservableCollection<Connector> ConnectorCollection = new ObservableCollection<Connector>();
+        SfDiagramComponent Diagram = Parent.DiagramContent.Diagram;
+        DiagramSelectionSettings SelectedItems = Diagram.SelectionSettings;
+        for (int i = 0; i < SelectedItems.Connectors.Count; i++)
+        {
+            ConnectorCollection.Add(SelectedItems.Connectors[i] as Connector);
+        }
+        return ConnectorCollection;
+    }
+    // Page Settings
+
+    /// <summary>
+    /// Method used to update the paper format of the Diagram.
+    /// </summary>
+    public async void OnPaperListValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, PaperListFields> args)
+    {
+        await OnUpdateDiagramProperties("PaperList", args.Value);
+    }
+    /// <summary>
+    /// Method used to update the portrait orientation
+    /// </summary>
+
+    public async void OnPagePortraitChange()
+    {
+        await OnUpdateDiagramProperties("PagePortrait", "");
+    }
+
+    /// <summary>
+    /// Method used to update the landscape orientation
+    /// </summary>
+
+    public async void OnPageLandscapeChange()
+    {
+        await OnUpdateDiagramProperties("PageLandscape", "");
+    }
+
+    /// <summary>
+    /// Method used to update the background color of the Diagram
+    /// </summary>
+    public async void OnPageBgColorChange(ColorPickerEventArgs args)
+    {
+        await OnUpdateDiagramProperties("PageBgColor", args.CurrentValue.Hex);
+        PageBgColorValue = args.CurrentValue.Hex;
+    }
+
+    /// <summary>
+    /// Method used to update the page breaks
+    /// </summary>
+
+    public async void OnShowPageBreaksChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        if (args?.Value != null)
+        {
+            await OnUpdateDiagramProperties("ShowPageBreaks", args.Value?.ToString() ?? "");
+        }
+    }
+
+    /// <summary>
+    /// Method used to update the page width
+    /// </summary>
+
+    public async void OnPageWidthChange(Syncfusion.Blazor.Inputs.ChangeEventArgs<double> args)
+    {
+        PageWidth = args.Value;
+        await OnUpdateDiagramProperties("PageWidth", args.Value.ToString());
+    }
+
+    /// <summary>
+    /// Method used to update the page height.
+    /// </summary>
+
+    public async void OnPageHeightChange(Syncfusion.Blazor.Inputs.ChangeEventArgs<double> args)
+    {
+        PageHeight = args.Value;
+        await OnUpdateDiagramProperties("PageHeight", args.Value.ToString());
+    }
+    public void CustomPageSettingsChange(bool Value)
+    {
+        if(Value)
+        {
+            PageDimensionVisibility = "block";
+            PageOrientationVisibility = "block";
+        }
+        else
+        {
+            PageDimensionVisibility = "none";
+            PageOrientationVisibility = "block";
+        }
+    }
+
+    /// <summary>
+    /// Method used to update the Diaram properties.
+    /// </summary>
+    public async Task OnUpdateDiagramProperties(string prop, string Value)
+    {
+        SfDiagramComponent Diagram = Parent.DiagramContent.Diagram;
+        Diagram.BeginUpdate();
+        if (!PreventPropertyChange)
+        {
+            switch (prop)
+            {
+                case "PageWidth":
+                    Parent.DiagramContent.DiagramPageWidth = Double.Parse(Value);
+                    break;;
+                case "PageHeight":
+                    Parent.DiagramContent.DiagramPageHeight = Double.Parse(Value);
+                    break;
+                case "PaperList":
+                    double PageWidth;
+                    double PageHeight;
+                    if (Value == "Custom")
+                    {
+                        CustomPageSettingsChange(true);
+                    }
+                    else
+                    {
+                        CustomPageSettingsChange(false);
+                        PaperSize paperSize = GetPaperSize(Value);
+                        PageWidth = paperSize.PageWidth;
+                        PageHeight = paperSize.PageHeight;
+                        if (PageWidth > 0 && PageHeight > 0)
+                        {
+                            if (Diagram.PageSettings.Orientation == PageOrientation.Portrait)
+                            {
+                                if (PageWidth > PageHeight)
+                                {
+                                    double temp = PageWidth;
+                                    PageWidth = PageHeight;
+                                    PageHeight = temp;
+                                }
+                            }
+                            else
+                            {
+                                if (PageHeight > PageWidth)
+                                {
+                                    double temp = PageHeight;
+                                    PageHeight = PageWidth;
+                                    PageWidth = temp;
+                                }
+                            }
+                        }
+                        Parent.DiagramContent.DiagramPageWidth = PageWidth;
+                        Parent.DiagramContent.DiagramPageHeight = PageHeight;
+                    }
+                    Parent.MenuBar.UpdateSelectedMenuBarItem(Value);
+                    Parent.MenuBar.RemoveSelectedMenuBarItem(Value);
+                    Parent.MenuBar.StateChanged();
+                    break;
+                case "PageLandscape":
+                    Parent.DiagramContent.DiagramOrientation = PageOrientation.Landscape;  
+                    Parent.DiagramContent.StateChanged();
+                    landscapeStyleClass = "e-control e-btn e-lib e-flat e-primary e-active";
+                    portraitStyleClass = "e-control e-btn e-lib e-flat e-primary";
+                    Parent.MenuBar.DesignMenuItems[0].Items[0].IconCss = "sf-icon-Selection";
+                    Parent.MenuBar.DesignMenuItems[0].Items[1].IconCss = "sf-icon-blank";
+                    break;
+                case "PagePortrait":
+                    Parent.DiagramContent.DiagramOrientation = PageOrientation.Portrait;
+                    Parent.DiagramContent.StateChanged();
+                    portraitStyleClass = "e-control e-btn e-lib e-flat e-primary e-active";
+                    landscapeStyleClass = "e-control e-btn e-lib e-flat e-primary";
+                    Parent.MenuBar.DesignMenuItems[0].Items[1].IconCss = "sf-icon-Selection";
+                    Parent.MenuBar.DesignMenuItems[0].Items[0].IconCss = "sf-icon-blank";
+                    break;
+                case "PageBgColor":
+                    Parent.DiagramContent.DiagramBgColor = Value;
+                    break;
+                case "ShowPageBreaks":
+                    Parent.DiagramContent.DiagramShowPageBreaks = (Value == "True") ? true : false;
+                    Parent.DiagramContent.StateChanged();
+                    Parent.MenuBar.ViewMenuItems[3].IconCss = Parent.MenuBar.ViewMenuItems[3].IconCss == "sf-icon-blank" ? "sf-icon-Selection" : "sf-icon-blank";
+                    break;
+            }
+        }
+        await Diagram.EndUpdate();
+    }
+
+    /// <summary>
+    /// Gets the size of the paper
+    /// </summary>
+    public PaperSize GetPaperSize(string paperName) {
+
+        PaperSize Paper = new PaperSize();
+
+        switch (paperName) {
+            case "Letter":
+                Paper.PageWidth = 816;
+                Paper.PageHeight = 1056;
+                break;
+            case "Legal":
+                Paper.PageWidth = 816;
+                Paper.PageHeight = 1344;
+                break;
+            case "Tabloid":
+                Paper.PageWidth = 1056;
+                Paper.PageHeight = 1632;
+                break;
+            case "A3":
+                Paper.PageWidth = 1122;
+                Paper.PageHeight = 1587;
+                break;
+            case "A4":
+                Paper.PageWidth = 793;
+                Paper.PageHeight = 1122;
+                break;
+            case "A5":
+                Paper.PageWidth = 559;
+                Paper.PageHeight = 793;
+                break;
+            case "A6":
+                Paper.PageWidth = 396;
+                Paper.PageHeight = 559;
+                break;
+        }
+        return Paper;
+    }
+
+    public class PaperSize
+    {
+        public double PageWidth { get; set; }
+        public double PageHeight { get; set; }
+    }       
+   
+}

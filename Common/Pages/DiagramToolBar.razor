@@ -1,0 +1,234 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.SplitButtons
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
+@using LogicCircuit.Shared
+@inject IJSRuntime JSRuntime
+
+@namespace LogicCircuit
+
+<style>
+    
+    #toolbarEditor .e-hscroll-bar{
+        overflow-x: initial !important;
+    }
+
+    #btnZoomIncrement {
+        width: 64px;
+        padding: 0px;
+        line-height: 28px;
+        font-size: 12px;
+        text-indent: 3px;
+        color: #323130;
+    }
+    .activecss {
+        background: #ffffff;
+    }
+   .e-dropdown-popup {
+        background-color: #fff;
+        color: #111827;
+    }
+
+    #btnHideProperty {
+        width: 28px;
+        height: 28px;
+        margin-left: 30px;
+        margin-bottom: 7px;
+    }
+
+    
+</style>
+<div class='db-toolbar-editor'>
+    <div class='@toolbarClassName'>
+        <div ID="toolbarEditor" class="e-control e-toolbar e-lib e-keyboard" style="display:@DiagramToolbarVisibility;height:auto;width:100%">
+            <SfToolbar OverflowMode="@OverflowMode.Scrollable" Width="100%"> 
+                <ToolbarEvents Clicked="@ToolbarEditorClick"></ToolbarEvents>
+                <ToolbarItems>
+                    <ToolbarItem  PrefixIcon="e-icons sf-icon-Undo tb-icons" TooltipText="Undo" CssClass="tb-item-start tb-item-undo"></ToolbarItem>
+                    <ToolbarItem  PrefixIcon="e-icons sf-icon-Redo tb-icons" TooltipText="Redo" CssClass="tb-item-end tb-item-redo"></ToolbarItem>
+                    <ToolbarItem Type="@ItemType.Separator"></ToolbarItem>                    
+                    <ToolbarItem PrefixIcon="e-icons sf-icon-Pan tb-icons" TooltipText="Pan Tool" CssClass="@PanItemCssClass"></ToolbarItem>
+                    <ToolbarItem PrefixIcon="e-icons sf-icon-Selector tb-icons" TooltipText="Pointer" CssClass="@PointerItemCssClass"></ToolbarItem>
+                    
+                    <ToolbarItem TooltipText="Signal Duration(ms)">
+                        <Template>
+                            <div class="db-text-input" style="display:@numerictext;margin-left:10px; margin-bottom:10px">
+                                <SfNumericTextBox TValue="int?" Value="@NumericValue" Format="###.##" Max=10000 Min=1000 Step=1000 Width="90px" Height="25px">
+                                    <NumericTextBoxEvents TValue="int?" ValueChange="OnChange"></NumericTextBoxEvents>
+                                </SfNumericTextBox>
+                            </div>
+                        </Template>
+                    </ToolbarItem> 
+                    
+               
+                    <ToolbarItem  PrefixIcon="e-icons tb-item-end tb-zoom-dropdown-btn" Id="ZoomPanel" Align="ItemAlign.Right" Visible= "@ZoomItemVisibility">
+                        <Template>
+                            <SfDropDownButton ID="btnZoomIncrement"  Content="@ZoomItemDropdownContent" CssClass="e-zoomoption e-dropdown-custom">
+                                <DropDownButtonEvents ItemSelected="@DrawZoomChange"></DropDownButtonEvents>
+                                <DropDownMenuItems>
+                                    <DropDownMenuItem Text="Zoom In"></DropDownMenuItem>
+                                    <DropDownMenuItem Text="Zoom Out"></DropDownMenuItem>
+                                    <DropDownMenuItem Text="Zoom to Fit"></DropDownMenuItem>
+                                    <DropDownMenuItem Text="Zoom to 50%"></DropDownMenuItem>
+                                    <DropDownMenuItem Text="Zoom to 100%"></DropDownMenuItem>
+                                    <DropDownMenuItem Text="Zoom to 200%"></DropDownMenuItem>
+                                </DropDownMenuItems>
+                            </SfDropDownButton>                          
+                        </Template>
+                    </ToolbarItem>
+                    
+                </ToolbarItems>
+            </SfToolbar>
+        </div>   
+    </div>   
+</div>
+
+@code {
+
+    public DiagramMain Parent { get; set; }
+    public DotNetObjectReference<DiagramToolBar>? objRef1;
+    public string numerictext = "none";
+    public int NumericValue = 3000;
+    public async void OnChange(Syncfusion.Blazor.Inputs.ChangeEventArgs<int?> args)
+    {
+        NumericValue = args.Value ?? 0;
+        await JSRuntime.InvokeAsync<string>("clearBlazorInterval");
+
+        await JSRuntime.InvokeAsync<string>("InvokeClockEvent", objRef1, NumericValue);
+    }
+    [JSInvokable]
+    public void ChangeState()
+    {
+        Parent.DiagramContent.ChangeState();
+    }
+    /// <summary>
+    /// Gets or sets the visibility of the diagram toolbar.
+    /// </summary>
+    public string DiagramToolbarVisibility { get; set; } = "block";    
+    /// <summary>
+    /// To enable/disable the hide/show property panel button in the toolbar
+    /// </summary>
+
+    string HideButtonCss = "db-toolbar-hide-btn tb-property-open";
+   
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the toolbar.
+    /// </summary>
+    string toolbarClassName { get; set; } = "db-toolbar-container";    
+
+    /// <summary>
+    /// Sets the content to be displayed in the zoom item dropdown
+    /// </summary>
+    ///
+    public string ZoomItemDropdownContent = "100%";
+    /// <summary>
+    /// Gets or sets the zoom item visibility in the toolbar
+    /// </summary>
+    public bool ZoomItemVisibility = false;
+    /// <summary>
+    /// Gets or sets the hide item visibility in the toolbar
+    /// </summary>
+    public bool HideItemVisibility = false;    
+
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the pan tool item in the diagram toolbar.
+    /// </summary>
+
+    public string PanItemCssClass = "tb-item-start tb-item-pan";
+
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the connector mode item in the diagram toolbar.
+    /// </summary>
+
+    public string ConnectorModeItemCssClass = "sf-icon-ConnectorMode";
+
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the fill property.
+    /// </summary>
+
+    string fill { get; set; } = "tb-item-start tb-item-fill";
+
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the stroke property.
+    /// </summary>
+    string stroke { get; set; } = "tb-item-end tb-item-stroke";
+
+    /// <summary>
+    /// Reference to the connector item in the toolbar
+    /// </summary>  
+
+    string ConnectorItem = "e-dropdown-custom";
+
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the pointer tool item in the diagram toolbar.
+    /// </summary>
+
+    public string PointerItemCssClass = "tb-item-middle tb-item-selected tb-item-pointer";  
+
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the draw connector tool item in the diagram toolbar.
+    /// </summary>
+    string DrawConnectorItemCssClass = "tb-item-middle tb-drawtools-dropdown-btn tb-custom-diagram-disable";  
+
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the text item in the diagram toolbar.
+    /// </summary>
+
+    string TextItemCssClass = "tb-item-end tb-drawtools-text tb-custom-diagram-disable";
+
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the group icon item in the diagram toolbar.
+    /// </summary>
+
+    public string GroupIcon = "e-icons sf-icon-Group tb-icons";
+
+    /// <summary>
+    /// Gets or sets the tooltip to the group/ungroup icon
+    /// </summary>
+    public string GroupToolTip = "Group";
+
+    /// <summary>
+    /// Gets or sets the CSS class name applied to the lock icon item in the diagram toolbar.
+    /// </summary>
+
+    string LockIcon = "e-icons sf-icon-Unlock tb-icons";
+
+    /// <summary>
+    /// Gets or sets the tooltip to lock item in the toolbar
+    /// </summary>
+    string LockToolTip = "Lock";
+    /// <summary>
+    /// Asynchronously initializes the component.
+    /// </summary>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        objRef1 = DotNetObjectReference.Create(this);
+    }
+    /// <summary>
+    /// Invoked after the component has been rendered.
+    /// </summary>
+    /// <param name="firstRender">A boolean indicating whether this is the first render of the component.</param>
+    protected override void OnAfterRender(bool firstRender)
+    {
+        ZoomItemDropdownContent = FormattableString.Invariant($"{Math.Round(Parent.DiagramContent.CurrentZoom * 100)}") + "%";
+        base.OnAfterRender(firstRender);
+    }  
+    /// <summary>
+    /// Notifies the component that its state has changed and requests a re-render.
+    /// </summary>
+    public void StateChanged()
+    {
+        StateHasChanged();
+    }
+    /// <summary>
+    /// Determines whether the component should be rendered.
+    /// </summary>
+    protected override bool ShouldRender()
+    {
+            return true;
+       
+    }
+}

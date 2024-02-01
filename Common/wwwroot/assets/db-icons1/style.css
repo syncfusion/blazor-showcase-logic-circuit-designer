@@ -1,0 +1,162 @@
+@font-face {
+    font-family: 'All icons Metrop';
+    src: url('Fonts/Fluent Diagram Builder.ttf') format('truetype'), url('Fonts/Fluent Diagram Builder.woff') format('woff'), url('Fonts/Fluent Diagram Builder.eot') format('eot'), url('Fonts/Fluent Diagram Builder.svg?#Fluent Diagram Builder') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="sf-icon-"], [class*=" sf-icon-"] {
+ font-family: 'All icons Metrop' !important;
+speak: none;
+font-size: 55px;
+font-style: normal;
+font-weight: normal;
+font-variant: normal;
+text-transform: none;
+line-height: 1;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+
+.sf-icon-Underline:before { content: "\e700"; }
+.sf-icon-InsertImage:before { content: "\e701"; }
+.sf-icon-Lock:before { content: "\e702"; }
+.sf-icon-Search:before { content: "\e703"; }
+.sf-icon-BringForward:before { content: "\e704"; }
+.sf-icon-ConnectorMode:before { content: "\e705"; }
+.sf-icon-Bold:before { content: "\e706"; }
+.sf-icon-Sendback:before { content: "\e707"; }
+.sf-icon-ZoomOut:before { content: "\e708"; }
+.sf-icon-Redo:before { content: "\e709"; }
+/*.sf-icon-Unlock1:before { content: "\e70a"; }
+*/.sf-icon-AilgnTop:before { content: "\e70a"; }
+.sf-icon-Copy:before { content: "\e70b"; }
+.sf-icon-Square:before { content: "\e70c"; }
+.sf-icon-Print:before { content: "\e70d"; }
+.sf-icon-DistributeVertical:before { content: "\e70e"; }
+.sf-icon-AlignHorizontally:before { content: "\e70f"; }
+.sf-icon-BringFront:before { content: "\e710"; }
+.sf-icon-Delete:before { content: "\e711"; }
+.sf-icon-Unlock:before { content: "\e712"; }
+.sf-icon-Ungroup:before { content: "\e713"; }
+.sf-icon-Selection:before { content: "\e714"; }
+.sf-icon-Ellipse:before { content: "\e715"; }
+.sf-icon-TextHorizontalCenter:before { content: "\e716"; }
+.sf-icon-ColorPickers:before { content: "\e717"; }
+.sf-icon-Expander:before { content: "\e718"; }
+.sf-icon-TextLeft:before { content: "\e719"; }
+.sf-icon-DownArrow:before { content: "\e71a"; }
+.sf-icon-ZoomIn:before { content: "\e71b"; }
+.sf-icon-Shape_Rectangle:before { content: "\e71c"; }
+.sf-icon-SendBackward:before { content: "\e71d"; }
+.sf-icon-ColorFormat:before { content: "\e71e"; }
+.sf-icon-Triangle:before { content: "\e71f"; }
+.sf-icon-Up:before { content: "\e720"; }
+.sf-icon-Group:before { content: "\e721"; }
+.sf-icon-AlignBottom:before { content: "\e722"; }
+.sf-icon-TextTop:before { content: "\e723"; }
+.sf-icon-TextRight:before { content: "\e724"; }
+.sf-icon-InsertText:before { content: "\e725"; }
+.sf-icon-RoundedSquare:before { content: "\e726"; }
+.sf-icon-Collapse1:before { content: "\e727"; }
+.sf-icon-DistributeHorizontal:before { content: "\e728"; }
+.sf-icon-Invisible:before { content: "\e729"; }
+.sf-icon-Shape_Circle:before { content: "\e72a"; }
+.sf-icon-Down:before { content: "\e72b"; }
+.sf-icon-AlignLeft:before { content: "\e72c"; }
+.sf-icon-Paste:before { content: "\e72d"; }
+.sf-icon-AlignRight:before { content: "\e72e"; }
+.sf-icon-AlignVertically:before { content: "\e72f"; }
+.sf-icon-ParaAlignCenter:before { content: "\e730"; }
+.sf-icon-Plus:before { content: "\e731"; }
+.sf-icon-View:before { content: "\e732"; }
+.sf-icon-Italic:before { content: "\e733"; }
+.sf-icon-Export:before { content: "\e734"; }
+.sf-icon-StraightLine:before { content: "\e735"; }
+.sf-icon-Shape_Square:before { content: "\e736"; }
+.sf-icon-Duplicate:before { content: "\e737"; }
+.sf-icon-Close:before { content: "\e738"; }
+.sf-icon-Collapse:before { content: "\e739"; }
+.sf-icon-Rotate1:before { content: "\e73a"; }
+.sf-icon-Pan:before { content: "\e73b"; }
+.sf-icon-TextBottom:before { content: "\e73c"; }
+.sf-icon-ParaAlignLeft:before { content: "\e73d"; }
+.sf-icon-ParaAlignRight:before { content: "\e73e"; }
+.sf-icon-TextInput:before { content: "\e73f"; }
+.sf-icon-Pickers:before { content: "\e740"; }
+.sf-icon-TextVerticalCenter:before { content: "\e741"; }
+.sf-icon-InsertLink:before { content: "\e742"; }
+.sf-icon-Undo:before { content: "\e743"; }
+.sf-icon-Cut:before { content: "\e744"; }
+.sf-icon-Save:before { content: "\e745"; }
+.sf-icon-DrawingMode:before { content: "\e746"; }
+.sf-icon-Rotate:before { content: "\e747"; }
+.sf-icon-Layers:before { content: "\e748"; }
+.sf-icon-BeizerLine:before { content: "\e749"; }
+/*.sf-icon-Lock1:before { content: "\e74b"; }
+*/.sf-icon-Order:before { content: "\e74a"; }
+.sf-icon-Selector:before { content: "\e74b"; }
+.sf-icon-add-child:before { content: "\e74c"; }
+.sf-icon-add-sibling:before { content: "\e74d"; }
+.sf-icon-multiple-child:before { content: "\e74e"; }
+.sf-icon-properties:before { content: "\e74f"; }
+.sf-icon-circle-add:before {
+    content: "\e753";
+}
+.sf-icon-folder-open:before {
+    content: "\e754";
+}
+.sf-icon-rotate:before {
+    content: "\e755";
+}
+.sf-icon-flip-vertical:before {
+    content: "\e756";
+}
+.sf-icon-flip-horizontal:before {
+    content: "\e757";
+}
+.sf-icon-rotate-left:before {
+    content: "\e758";
+}
+.sf-icon-rotate-right:before {
+    content: "\e759";
+}
+.sf-icon-save-as:before {
+    content: "\e75a";
+}
+.sf-icon-orientation:before {
+    content: "\e75b";
+}
+.sf-icon-portrait:before {
+    content: "\e75c";
+}
+.sf-icon-landscape:before {
+    content: "\e75d";
+}
+.sf-icon-gradient-alignemnt:before {
+    content: "\e750";
+}
+.sf-icon-save-as:before {
+    content: "\e75a";
+}
+.sf-icon-arrow-left:before {
+    content: "\e75e";
+
+}
+.sf-icon-arrow-right:before {
+    content: "\e761";
+}
+.sf-icon-arrow-up:before {
+    content: "\e760";
+}
+.sf-icon-arrow-down:before {
+    content: "\e75f";
+}
+/*.sf-icon-aspect-ratio-disable:before { content: "\e712"; }
+.sf-icon-gradient-alignemnt:before { content: "\e750"; }
+.sf-icon-add-same-level-child:before {
+    content: "\e755";
+}
+.sf-icon-move:before {
+    content: "\e756";
+}*/
