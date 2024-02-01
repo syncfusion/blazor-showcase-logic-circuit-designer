@@ -1,14 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using System;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
-using System.Globalization;
+﻿using Microsoft.JSInterop;
 using Syncfusion.Blazor.Diagram;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.Extensions.Options;
-using System.Text.Json.Serialization;
 using System.Text.Json;
 
 using LogicCircuit.Shared;
@@ -26,6 +17,10 @@ namespace LogicCircuit
         /// Gets or sets the value when diagram is completed loaded.
         /// </summary>
         public bool IsLoadingData = true;
+        /// <summary>
+        /// Notify when collection changed is completed or not.
+        /// </summary>
+        internal bool IsCollectionChangeCompleted = true;
         /// <summary>
         /// Gets or sets the initial timer value for clock node
         /// </summary>
@@ -78,13 +73,15 @@ namespace LogicCircuit
         /// This method is called when mouse down on the push button node.
         /// </summary>
         /// <param name="id"></param>
-        private void PushButtonMouseDown(string id)
+        private async void PushButtonMouseDown(string id)
         {
-            for (int i = 0; i<Diagram.Nodes.Count; i++)
+            Diagram.BeginUpdate();
+            List<Node> nodeGroups = Diagram.Nodes.Where(node => (node is NodeGroup && node.ID.IndexOf("Push") != -1)).ToList();
+            for (int i = 0; i< nodeGroups.Count; i++)
             {
-                if (Diagram.Nodes[i] is NodeGroup grpNode && grpNode.ID.IndexOf("Push") != -1)
+                if (nodeGroups[i] is NodeGroup grpNode)
                 {
-                    if(grpNode.ID.IndexOf(id) != -1)
+                    if (grpNode.ID.IndexOf(id) != -1)
                     {
                         UpdatePushButtonNodeStyle(grpNode);
                         
@@ -103,20 +100,19 @@ namespace LogicCircuit
                 }
                 
             }
+            await Diagram.EndUpdate();
         }
         /// <summary>
         /// Updates the objects in the diagram when mouse down action is performed on the push button.
         /// </summary>
-        private async void UpdatePushButtonNodeStyle(NodeGroup grpNode)
+        private void UpdatePushButtonNodeStyle(NodeGroup grpNode)
         {
             Node? child = Diagram.GetObject(grpNode.Children[1]) as Node;
             Node? child1 = Diagram.GetObject(grpNode.Children[2]) as Node;
             if (child1 !=null && child!=null)
             {
-                Diagram.BeginUpdate();
                 child1.Style.Fill = "#05DAC5";
-                child.AdditionalInfo["BinaryState"] = 1;
-                await Diagram.EndUpdate();
+                child.AdditionalInfo["BinaryState"] = 1;                
                 SetBinaryStateFromInput(child);
                 RunSimulation();
             }
@@ -124,52 +120,55 @@ namespace LogicCircuit
         /// <summary>
         /// Updated the objects when push button mouse is released.
         /// </summary>
-        private void PushButtonMouseUp(string id)
+        private async void PushButtonMouseUp(string id)
         {
-            for (int i = 0; i<Diagram.Nodes.Count; i++)
+            Diagram.BeginUpdate();
+            if (id == "mouseUp")
             {
-                if (Diagram.Nodes[i] is NodeGroup grpNode && grpNode.ID.IndexOf("Push") != -1)
-                {
-                    if (grpNode.ID.IndexOf(id) != -1)
-                    {
-                        UpdatePushUpNodeStyle(grpNode);
-                    }
-                    else
-                    {
-                        for (int j = 0; j<grpNode.Children.Length; j++)
-                        {
-                            if (grpNode.Children[j]==id)
-                            { 
-                                UpdatePushUpNodeStyle(grpNode);
-                            }
-                        }
-                    }
-                }
-                
-            }
-            if(id == "mouseUp")
-            {
-                if(Diagram.SelectionSettings!=null && Diagram.SelectionSettings.Nodes.Count>0 && Diagram.SelectionSettings.Nodes[0] is NodeGroup grpNode && grpNode.ID.IndexOf("Push") != -1)
+                if (Diagram.SelectionSettings != null && Diagram.SelectionSettings.Nodes.Count > 0 && Diagram.SelectionSettings.Nodes[0] is NodeGroup grpNode && grpNode.ID.IndexOf("Push") != -1)
                 {
                     UpdatePushUpNodeStyle(grpNode);
                 }
             }
+            else
+            {
+                List<Node> nodeGroups = Diagram.Nodes.Where(node => (node is NodeGroup && node.ID.IndexOf("Push") != -1)).ToList();
+                for (int i = 0; i < nodeGroups.Count; i++)
+                {
+                    if (nodeGroups[i] is NodeGroup grpNode)
+                    {
+                        if (grpNode.ID.IndexOf(id) != -1)
+                        {
+                            UpdatePushUpNodeStyle(grpNode);
+                        }
+                        else
+                        {
+                            for (int j = 0; j < grpNode.Children.Length; j++)
+                            {
+                                if (grpNode.Children[j] == id)
+                                {
+                                    UpdatePushUpNodeStyle(grpNode);
+                                }
+                            }
+                        }
+                    }
+                }
+            }            
+            await Diagram.EndUpdate();
         }
 
         /// <summary>
         /// Update the diagram objects when push Up action is performed.
         /// </summary>
-        private async void UpdatePushUpNodeStyle(NodeGroup grpNode)
+        private void UpdatePushUpNodeStyle(NodeGroup grpNode)
         {
             Node? child = Diagram.GetObject(grpNode.Children[1]) as Node;
             Node? child1 = Diagram.GetObject(grpNode.Children[2]) as Node;
 
             if (child1!=null && child!=null)
             {
-                Diagram.BeginUpdate();
                 child1.Style.Fill = "white";
-                child.AdditionalInfo["BinaryState"] = 0;
-                await Diagram.EndUpdate();
+                child.AdditionalInfo["BinaryState"] = 0;                
                 SetBinaryStateFromInput(child);
                 RunSimulation();
             }
@@ -181,12 +180,15 @@ namespace LogicCircuit
         [JSInvokable]
         public void OnMouseDownEvent(string id)
         {
-            if(id.Contains("content"))
-                PushButtonMouseDown(id.Replace("_content", ""));
-            else if(id.Contains("container"))
-                PushButtonMouseDown(id.Replace("group_container", ""));
-            else if(id=="Push Button")
-                PushButtonMouseDown(id);
+            if (IsCollectionChangeCompleted)
+            {
+                if (id.Contains("content"))
+                    PushButtonMouseDown(id.Replace("_content", ""));
+                else if (id.Contains("container"))
+                    PushButtonMouseDown(id.Replace("group_container", ""));
+                else if (id == "Push Button")
+                    PushButtonMouseDown(id);
+            }
         }
         /// <summary>
         /// This method invoke when mouseup event is triggered in the daigram
@@ -195,52 +197,54 @@ namespace LogicCircuit
         [JSInvokable]
         public void OnMouseUpEvent(string id)
         {
-            if (id.Contains("content"))
-                PushButtonMouseUp(id.Replace("_content", ""));
-            else if (id.Contains("container"))
-                PushButtonMouseUp(id.Replace("group_container", ""));
-            else if (id.Contains("diagram_diagramLayer_svg"))
-                PushButtonMouseUp("mouseUp");
-            else if (id=="Push Button")
-                PushButtonMouseUp(id);
+            if (IsCollectionChangeCompleted)
+            {
+                if (id.Contains("content"))
+                    PushButtonMouseUp(id.Replace("_content", ""));
+                else if (id.Contains("container"))
+                    PushButtonMouseUp(id.Replace("group_container", ""));
+                else if (id.Contains("diagram_diagramLayer_svg"))
+                    PushButtonMouseUp("mouseUp");
+                else if (id == "Push Button")
+                    PushButtonMouseUp(id);
+            }
         }
 
         /// <summary>
         /// Change the current state of the nodes and connectos
         /// </summary>
         [JSInvokable]
-        public void ChangeState()
+        public async void ChangeState()
         {
-            if(Diagram.Nodes != null)
+            if (IsCollectionChangeCompleted && Diagram.Nodes != null && Diagram.Nodes.Count > 0)
             {
-                for (int i = 0; i<Diagram.Nodes.Count; i++)
+                Diagram.BeginUpdate();
+                List<Node> clkNodes = Diagram.Nodes.Where(node => node.ID.Contains("Clock", StringComparison.CurrentCulture) && node is NodeGroup && node.AdditionalInfo != null).ToList();
+                for (int i = 0; i < clkNodes.Count; i++)
                 {
-                    Node clkNode = Diagram.Nodes[i];
-
-                    if (clkNode.ID.IndexOf("Clock") !=-1 && clkNode is NodeGroup grpNode && clkNode.AdditionalInfo != null)
+                    Node clkNode = clkNodes[i];
+                    if (clkNode.ID.IndexOf("Clock") != -1 && clkNode is NodeGroup grpNode && clkNode.AdditionalInfo != null)
                     {
-                        if (grpNode.AdditionalInfo.Count==0)
+                        if (grpNode.AdditionalInfo.Count == 0)
                         {
                             Node? firstChild = Diagram.GetObject(grpNode.Children[0]) as Node;
-                            if (firstChild != null && firstChild.AdditionalInfo.Count>0)
+                            if (firstChild != null && firstChild.AdditionalInfo.Count > 0)
                             {
                                 clkNode = firstChild;
                             }
                         }
                         bool binaryState = (int)clkNode.AdditionalInfo["BinaryState"] == 0;
                         clkNode.AdditionalInfo["BinaryState"] = binaryState ? 1 : 0;
-                            
                         Node? child = Diagram.GetObject(grpNode.Children[1]) as Node;
                         if (child != null)
                             child.Style.Fill = binaryState ? "#05DAC5" : "white";
 
                         SetBinaryStateFromInput(clkNode);
                         RunSimulation();
-                        
                     }
                 }
+                await Diagram.EndUpdate();
             }
-            
         }
         /// <summary>
         /// This method will be called when diagram is created
@@ -251,8 +255,9 @@ namespace LogicCircuit
             Parent.Toolbar.ZoomItemVisibility = true;
             Parent.Toolbar.HideItemVisibility = true;
             Parent.Toolbar.StateChanged();
+            Diagram.BeginUpdate();
             RunSimulation();
-            
+            await Diagram.EndUpdate();
             await JSRuntime.InvokeAsync<string>("WireMouseEvents");
             await JSRuntime.InvokeAsync<string>("InvokeClockEvent", objRef, timerValue);
            
@@ -969,69 +974,47 @@ namespace LogicCircuit
         /// <summary>
         /// Update the nodes and connectors in the diagram when the input gets changed.
         /// </summary>
-        public async void RunSimulation()
+        public void RunSimulation()
         {
             DiagramObjectCollection<Node> RegulateNodes = new DiagramObjectCollection<Node>();
-
             for (int i = 0; i < Diagram.Nodes.Count; i++)
             {
                 Node node = Diagram.Nodes[i];
 
-                if (node.AdditionalInfo!=null && node.AdditionalInfo.Count > 0)
+                if (node.AdditionalInfo != null && node.AdditionalInfo.Count > 0)
                 {
                     string binaryStateValue = node.AdditionalInfo["ControlType"].ToString();
 
                     switch (binaryStateValue)
                     {
                         case "InputControl":
+                            SetBinaryStateFromInput(node);
+                            break;
                         case "Gates":
+                            GatesOutput(node);
+                            break;
                         case "FlipFlop":
+                            FlipFlopOutput(node);
+                            break;
                         case "OtherControl":
+                            OtherControlOutput(node);
+                            break;
                         case "OutputControl":
-                            RegulateNodes.Add(node);
+                            foreach (NodeGroup grpNode in Diagram.Nodes.OfType<NodeGroup>())
+                            {
+                                if (grpNode.Children.Contains(node.ID))
+                                {
+                                    OutputControlOutput(grpNode);
+                                }
+                            }
+                            if (node.ID.IndexOf("Digit") != -1)
+                            {
+                                OutputControlOutput(node);
+                            }
                             break;
                     }
                 }
             }
-            Diagram.BeginUpdate();
-            for (int i = 0; i<RegulateNodes.Count; i++)
-            {
-                Node node = RegulateNodes[i];
-                string binaryStateValue = node.AdditionalInfo["ControlType"].ToString();
-                if (node.AdditionalInfo != null && binaryStateValue == "InputControl")
-                {
-                    SetBinaryStateFromInput(node);
-                }
-                else if(binaryStateValue == "Gates")
-                {
-                    GatesOutput(node);
-                }
-                else if (binaryStateValue == "FlipFlop")
-                {
-                    FlipFlopOutput(node);
-                }
-                else if (binaryStateValue == "OtherControl")
-                {
-                    OtherControlOutput(node);
-                }
-                else if (binaryStateValue == "OutputControl")
-                {
-                    
-                    foreach (NodeGroup grpNode in Diagram.Nodes.OfType<NodeGroup>())
-                    {
-                        if (grpNode.Children.Contains(node.ID))
-                        {
-                            OutputControlOutput(grpNode);
-                        }
-                    }
-                    if (node.ID.IndexOf("Digit") != -1)
-                    {
-                        OutputControlOutput(node);
-                    }
-                }
-
-            }
-            await Diagram.EndUpdate();
         }
         /// <summary>
         /// Asynchronously sets the binary state of a node based on its input.
@@ -2376,13 +2359,14 @@ namespace LogicCircuit
         /// Invoke when the click action is performed on the diagram.
         /// </summary>
         /// <param name="args">The event arguments containing information about the click action.</param>
-        private void OnClick(ClickEventArgs args)
+        private async void OnClick(ClickEventArgs args)
         {
-            if(args !=null)
+            if(args !=null && IsCollectionChangeCompleted)
             {
                 string button = args.Button.ToString();
                 if(button == "Left")
                 {
+                    Diagram.BeginUpdate();
                     if (args.Element is Node clickedNode && clickedNode != null)
                     {
                         foreach (Node node1 in Diagram.Nodes)
@@ -2402,22 +2386,23 @@ namespace LogicCircuit
                     }
                     if (args.Element is Node node && node.ID.IndexOf("Clock") != -1)
                     {
-                        Parent.Toolbar.numerictext="block";
+                        Parent.Toolbar.numerictext = "block";
                         Parent.Toolbar.StateChanged();
                     }
-                    else if (args.Element is DiagramSelectionSettings selectedNode && selectedNode.Nodes.Count>0)
+                    else if (args.Element is DiagramSelectionSettings selectedNode && selectedNode.Nodes.Count > 0)
                     {
                         if (selectedNode.Nodes[0].ID.IndexOf("Clock") != -1)
                         {
-                            Parent.Toolbar.numerictext="block";
+                            Parent.Toolbar.numerictext = "block";
                             Parent.Toolbar.StateChanged();
                         }
                     }
-                    else
+                    else if (Parent.Toolbar.numerictext != "none")
                     {
-                        Parent.Toolbar.numerictext="none";
+                        Parent.Toolbar.numerictext = "none";
                         Parent.Toolbar.StateChanged();
                     }
+                    await Diagram.EndUpdate();
                 }
             }
             

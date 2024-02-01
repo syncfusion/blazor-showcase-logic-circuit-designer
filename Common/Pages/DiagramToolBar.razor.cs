@@ -193,6 +193,7 @@ namespace LogicCircuit
 
             if (eventname == "historychange")
             {
+                string previousValue = toolbarClassName;
                 RemoveUndo();
                 RemoveRedo();
                 if (diagram.HistoryManager.CanUndo)
@@ -207,7 +208,8 @@ namespace LogicCircuit
                     this.Parent.DiagramContent.IsUndo = diagram.HistoryManager.CanUndo;
                     toolbarClassName += " db-redo";
                 }
-                StateHasChanged();
+                if (previousValue != toolbarClassName)
+                    StateHasChanged();
             }
         }
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously

@@ -202,23 +202,6 @@ function WireMouseEvents() {
         instantObj.invokeMethodAsync('OnMouseUpEvent', ElementId);
     });
 }
-window.addEventListener('mousedown', function (event) {
-    document.getElementById('diagramContainerDiv').addEventListener('mousedown', function (event) {
-        
-        var clickedElementId = event.target.id;
-        instantObj.invokeMethodAsync('OnMouseDownEvent', clickedElementId);
-        
-    });
-});
-window.addEventListener('mouseup', function (event) {
-
-    document.getElementById('diagramContainerDiv').addEventListener('mouseup', function (event) {
-        // Get the ID of the clicked element
-        var ElementId = event.target.id;
-        instantObj.invokeMethodAsync('OnMouseUpEvent', ElementId);
-    });
-});
-
 function BlurSelectedItem(id) {
     var menuItem = document.getElementById(id);
     menuItem.blur();
