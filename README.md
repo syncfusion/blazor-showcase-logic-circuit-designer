@@ -18,6 +18,7 @@ The samples require the following requirements to run.
 
 ## Demo
 
-### <a href="https://blazor.syncfusion.com/showcase/diagrambuilder/" target="_blank">https://blazor.syncfusion.com/showcase/diagrambuilder/</a>
+### Server -  <a href="https://blazor.syncfusion.com/showcase/logic-circuit-designer/" target="_blank">https://blazor.syncfusion.com/showcase/logic-circuit-designer/</a>
+### WebAssembly  - <a href="https://blazor.syncfusion.com/showcase/wasm/logic-circuit-designer/" target="_blank">https://blazor.syncfusion.com/showcase/wasm/logic-circuit-designer/</a>
 
 Check all the showcase samples from <a href="https://blazor.syncfusion.com" target="_blank">here</a>.
