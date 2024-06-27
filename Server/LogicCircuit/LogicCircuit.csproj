@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\BlazorServerCommon_NET6.csproj" />
+    <ProjectReference Include="..\..\common\BlazorServerCommon_NET6.csproj" />
   </ItemGroup>
 
 </Project>
