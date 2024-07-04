@@ -198,24 +198,34 @@
     /// Gets or sets the tooltip to lock item in the toolbar
     /// </summary>
     string LockToolTip = "Lock";
-    
+    /// <summary>
+    /// Asynchronously initializes the component.
+    /// </summary>
+    /// <returns>A Task representing the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         objRef1 = DotNetObjectReference.Create(this);
     }
-
+    /// <summary>
+    /// Invoked after the component has been rendered.
+    /// </summary>
+    /// <param name="firstRender">A boolean indicating whether this is the first render of the component.</param>
     protected override void OnAfterRender(bool firstRender)
     {
         ZoomItemDropdownContent = FormattableString.Invariant($"{Math.Round(Parent.DiagramContent.CurrentZoom * 100)}") + "%";
         base.OnAfterRender(firstRender);
     }  
-
+    /// <summary>
+    /// Notifies the component that its state has changed and requests a re-render.
+    /// </summary>
     public void StateChanged()
     {
         StateHasChanged();
     }
-
+    /// <summary>
+    /// Determines whether the component should be rendered.
+    /// </summary>
     protected override bool ShouldRender()
     {
             return true;

@@ -253,12 +253,17 @@
     public string LandscapeRadioButtonValue { get; set; } = "true";
 
     #endregion
-
+    /// <summary>
+    /// Initializes the component.
+    /// </summary>
     protected override void OnInitialized()
     {
         PageLandscape= PageLandscapeValue.ToString();
         PagePortrait = PagePortraitValue.ToString();
     }
+    /// <summary>
+    /// Notifies the component that its state has changed and requests a re-render.
+    /// </summary>
     public void StateChanged()
     {
         StateHasChanged();
@@ -332,7 +337,12 @@
         ShowPageBreaksValue = PageSettings.ShowPageBreaks;
     }
     
-   
+    /// <summary>
+    /// Retrieves the selected nodes from the diagram.
+    /// </summary>
+    /// <returns>
+    /// An ObservableCollection containing the selected nodes.
+    /// </returns>
     public ObservableCollection<Node> OnSelectedNode()
     {
         ObservableCollection<Node> NodesCollection = new ObservableCollection<Node>();
@@ -349,7 +359,12 @@
         return NodesCollection;
     }
 
-    
+    /// <summary>
+    /// Retrieves the selected connectors from the diagram.
+    /// </summary>
+    /// <returns>
+    /// An ObservableCollection containing the selected connectors.
+    /// </returns>
     public ObservableCollection<Connector> OnSelectedConnector()
     {
         ObservableCollection<Connector> ConnectorCollection = new ObservableCollection<Connector>();
