@@ -33,6 +33,7 @@ html, body {
     .db-diagram-name-container #diagramName {
         display: block;
         margin-top: 2px;
+        outline: none;
     }
 
     .db-diagram-name-container #diagramEditable {
