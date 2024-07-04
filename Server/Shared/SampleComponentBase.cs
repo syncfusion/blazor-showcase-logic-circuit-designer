@@ -15,6 +15,7 @@ namespace DiagramBuilder.Shared
         [Inject]
         protected SampleService Service { get; set; }
 
+        // internal SampleData SampleDetails { get; set; } = new SampleData();
         protected async override void OnAfterRender(bool FirstRender)
         {
             await Task.Delay(3000).ConfigureAwait(true);

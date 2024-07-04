@@ -150,6 +150,7 @@
     /// <summary>
     /// Gets or sets the snap intervals in the diagram.
     /// </summary>
+
     public double[] SnapIntervals { get; set; } = new double[] {
             1, 9, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75
     }; 
@@ -161,10 +162,6 @@
     /// Property used to indicate when a diagram element is selected or deselected.
     /// </summary>
     public bool diagramSelected = false;
-	/// <summary>
-    /// Sets the group id when drag and drop the group node from palette to diagram.
-    /// </summary>
-    private string groupID = string.Empty;
     /// <summary>
     /// This collection contains the keyboard keys used to invoke the event.
     /// </summary>
@@ -190,6 +187,7 @@
     /// Gets or sets the vertical grid values for the diagram gridlines
     /// </summary>
     public double[] VDotIntervals { get; set; } = new double[] { 1, 19, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, 0.5, 19.5, };
+
     /// <summary>
     /// This method is called when the component has been initialized.
     /// </summary>
@@ -452,7 +450,7 @@
         }
     }
     /// <summary>
-    /// Event handler for the Drag Start event.
+    /// Event handler for the Drag Star event.
     /// </summary>
     /// <param name="args">The event arguments containing information about the Drag start.</param>
 
@@ -460,10 +458,13 @@
     {
         IsCollectionChangeCompleted = false;
     }
+
+    string groupID = string.Empty;
     /// <summary>
     /// Event handler for the DragDrop changed event.
     /// </summary>
     /// <param name="args">The event arguments containing information about the DragDrop change.</param>
+
     private void OnDrop(DropEventArgs args)
     {
         groupID = string.Empty;
@@ -499,6 +500,7 @@
     /// Event handler for the Drag leave event.
     /// </summary>
     /// <param name="args">The event arguments containing information about the drag leave.</param>
+
     private void OnDragLeave(DragLeaveEventArgs args)
     {
         IsCollectionChangeCompleted = true;

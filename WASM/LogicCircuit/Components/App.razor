@@ -1,3 +1,4 @@
+﻿@page "/"
 <!DOCTYPE html>
 <html>
 
@@ -8,23 +9,24 @@
     <base href="/" />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    <script src="_content/BlazorWasmCommon_NET6/interop.js"></script>
+    <script src="_content/BlazorWasmCommon_NET8/interop.js"></script>
     <link href="_content/Syncfusion.Blazor/styles/fluent.css" rel="stylesheet" />
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>   
-    <link href="_content/BlazorWasmCommon_NET6/assets/db-icons1/style.css" rel="stylesheet" />
-    <link href="_content/BlazorWasmCommon_NET6/assets/dbstyle/diagrambuilder.css" rel="stylesheet" />
+    <link href="_content/BlazorWasmCommon_NET8/assets/db-icons1/style.css" rel="stylesheet" />
+    <link href="_content/BlazorWasmCommon_NET8/assets/dbstyle/diagrambuilder.css" rel="stylesheet" />
     <script src="_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js" type="text/javascript"></script>
+    <HeadOutlet @rendermode="@InteractiveWebAssembly" />
 </head>
 
 <body>
     <div id="app"></div>
-
+    <Routes @rendermode="@InteractiveWebAssembly" />
     <div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.web.js"></script>
 </body>
 
 </html>
