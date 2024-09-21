@@ -100,7 +100,7 @@ namespace LogicCircuit
                 }
                 
             }
-            await Diagram.EndUpdate();
+            await Diagram.EndUpdateAsync();
         }
         /// <summary>
         /// Updates the objects in the diagram when mouse down action is performed on the push button.
@@ -154,7 +154,7 @@ namespace LogicCircuit
                     }
                 }
             }            
-            await Diagram.EndUpdate();
+            await Diagram.EndUpdateAsync();
         }
 
         /// <summary>
@@ -243,7 +243,7 @@ namespace LogicCircuit
                         RunSimulation();
                     }
                 }
-                await Diagram.EndUpdate();
+                await Diagram.EndUpdateAsync();
             }
         }
         /// <summary>
@@ -257,7 +257,7 @@ namespace LogicCircuit
             Parent.Toolbar.StateChanged();
             Diagram.BeginUpdate();
             RunSimulation();
-            await Diagram.EndUpdate();
+            await Diagram.EndUpdateAsync();
             await JSRuntime.InvokeAsync<string>("WireMouseEvents");
             await JSRuntime.InvokeAsync<string>("InvokeClockEvent", objRef, timerValue);
            
@@ -2402,7 +2402,7 @@ namespace LogicCircuit
                         Parent.Toolbar.numerictext = "none";
                         Parent.Toolbar.StateChanged();
                     }
-                    await Diagram.EndUpdate();
+                    await Diagram.EndUpdateAsync();
                 }
             }
             
