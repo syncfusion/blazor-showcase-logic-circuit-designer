@@ -612,7 +612,7 @@
                     {
                         nodes[i].RotationAngle = nodes[i].RotationAngle - 90;
                     }
-                    await diagram.EndUpdateAsync();
+                    await diagram.EndUpdate();
                     diagram.EndGroupAction();
                 }
                 Parent.DiagramContent.StateChanged();
@@ -628,7 +628,7 @@
                     {
                         selectedNodes[i].RotationAngle = selectedNodes[i].RotationAngle + 90;
                     }
-                    await diagram.EndUpdateAsync();
+                    await diagram.EndUpdate();
                     diagram.EndGroupAction();                   
                 }
                 Parent.DiagramContent.StateChanged();
@@ -665,7 +665,7 @@
                 }
                 diagram.BeginUpdate();
                 diagram.Select(collection, false);
-                await diagram.EndUpdateAsync();
+                await diagram.EndUpdate();
                 break;
             case "selectallconnectors":
                 Select = true;
@@ -676,7 +676,7 @@
                 }   
                 diagram.BeginUpdate();
                 diagram.Select(collection);
-                await diagram.EndUpdateAsync();
+                await diagram.EndUpdate();
                 break;
             case "deselectall":
                 Select = true;
@@ -686,7 +686,7 @@
                 view = true;
                 diagram.BeginUpdate();
                 Parent.DiagramContent.SnapConstraint = Parent.DiagramContent.SnapConstraint ^ SnapConstraints.ShowLines;
-                await diagram.EndUpdateAsync();
+                await diagram.EndUpdate();
                 ViewMenuItems[0].IconCss = ViewMenuItems[0].IconCss == "sf-icon-blank" ? "sf-icon-Selection" : "sf-icon-blank";
                 break;
             case "snaptogrid":
@@ -721,7 +721,7 @@
                 view= true;
                 diagram.BeginUpdate();
                 Parent.DiagramContent.DiagramShowPageBreaks = !Parent.DiagramContent.DiagramShowPageBreaks;
-                await diagram.EndUpdateAsync();
+                await diagram.EndUpdate();
                 Parent.DiagramContent.StateChanged();
                 ViewMenuItems[3].IconCss = ViewMenuItems[3].IconCss == "sf-icon-blank" ? "sf-icon-Selection" : "sf-icon-blank";
                 Parent.DiagramPropertyPanel.ShowPageBreaksValue = !Parent.DiagramPropertyPanel.ShowPageBreaksValue;
@@ -739,7 +739,7 @@
                 {
                     Parent.DiagramContent.IsMultiplePage = true; ;
                 }                               
-                await diagram.EndUpdateAsync();
+                await diagram.EndUpdate();
                 break;
             case "zoomin":
                 view = true;
@@ -755,7 +755,7 @@
                 Design = true;
                 diagram.BeginUpdate();
                 Parent.DiagramContent.DiagramOrientation = PageOrientation.Landscape;
-                await diagram.EndUpdateAsync();                                   
+                await diagram.EndUpdate();                                   
                 DesignMenuItems[0].Items[0].IconCss = "sf-icon-Selection" ;
                 DesignMenuItems[0].Items[1].IconCss =  "sf-icon-blank";                    
                 Parent.DiagramPropertyPanel.landscapeStyleClass = "e-control e-btn e-lib e-flat e-primary e-active";
@@ -766,7 +766,7 @@
                 Design = true;       
                 diagram.BeginUpdate();
                 Parent.DiagramContent.DiagramOrientation = PageOrientation.Portrait;                
-                await diagram.EndUpdateAsync();
+                await diagram.EndUpdate();
                 DesignMenuItems[0].Items[1].IconCss = "sf-icon-Selection";
                 DesignMenuItems[0].Items[0].IconCss = "sf-icon-blank";                
                 Parent.DiagramPropertyPanel.portraitStyleClass = "e-control e-btn e-lib e-flat e-primary e-active";
@@ -868,7 +868,7 @@
                 selectedConnectors[i].Flip = flip == "Flip Horizontal" ? FlipDirection.Horizontal : FlipDirection.Vertical;
             }
         }
-        await diagram.EndUpdateAsync();
+        await diagram.EndUpdate();
     }
     /// <summary>
     /// Updates the selected menu bar item based on the provided paper type.
@@ -1134,7 +1134,7 @@
             string json = await FileUtil.LoadFile(jsRuntime, args.FileData);
             json = json.Replace(System.Environment.NewLine, string.Empty);
             Parent.DiagramContent.IsLoadingData = false;
-            await Parent.DiagramContent.Diagram.LoadDiagramAsync(json.ToString());
+            await Parent.DiagramContent.Diagram.LoadDiagram(json.ToString());
             Parent.DiagramContent.IsLoadingData = true;
         }
         else
@@ -1143,7 +1143,7 @@
             Node Node = Diagram.SelectionSettings.Nodes[0];
             Diagram.BeginUpdate();
             Node.Shape = new ImageShape() { Type = NodeShapes.Image, Source = args.FileData.RawFile.ToString() };
-            await Diagram.EndUpdateAsync();
+            await Diagram.EndUpdate();
         }
     }
     /// <summary>
