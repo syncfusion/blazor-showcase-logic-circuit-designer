@@ -286,6 +286,7 @@
             {
                 ControlPointsVisibility = ControlPointsVisibility.Source | ControlPointsVisibility.Target,
                 Smoothness = BezierSmoothness.SymmetricDistance,
+                AllowSegmentsReset = false 
             };
             connector.Constraints = ConnectorConstraints.Default & ~ConnectorConstraints.Drag;
         }
@@ -393,7 +394,7 @@
     /// <param name="Json">The JSON representation of the diagram to load.</param>
     public void LoadNewDiagram(string Json)
     {
-        _= Diagram.LoadDiagram(Json);
+        _= Diagram.LoadDiagramAsync(Json);
     }
 
     public void Dispose()
@@ -420,7 +421,7 @@
     {
         Diagram.BeginUpdate();
         RunSimulation();
-        await Diagram.EndUpdate();
+        await Diagram.EndUpdateAsync();
     }
     /// <summary>
     /// This method invoke when the given key is pressed.
@@ -584,7 +585,7 @@
             {
                 RunSimulation();
             }
-            _= Diagram.EndUpdate();
+            _= Diagram.EndUpdateAsync();
         }
         IsCollectionChangeCompleted = true;
     }
