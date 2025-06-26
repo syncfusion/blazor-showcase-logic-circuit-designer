@@ -35,7 +35,7 @@
 	<None Include="wwwroot\css\open-iconic\README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\common\BlazorWasmCommon_NET8.csproj" />
+    <ProjectReference Include="..\..\Common\BlazorWasmCommon_NET8.csproj" />
   </ItemGroup>
 
 </Project>
