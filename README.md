@@ -1,4 +1,4 @@
-[![.NET](https://github.com/ArunKumar-SF3979/blazor-showcase-logic-circuit-designer/actions/workflows/dotnet.yml/badge.svg)](https://github.com/ArunKumar-SF3979/blazor-showcase-logic-circuit-designer/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/syncfusion/blazor-showcase-logic-circuit-designer/actions/workflows/dotnet.yml/badge.svg)](https://github.com/syncfusion/blazor-showcase-logic-circuit-designer/actions/workflows/dotnet.yml)
 
 # blazor-showcase-logic-circuit-designer
 The Logic Circuit Designer App is a powerful and intuitive web application built using Blazor, a modern web framework that allows developers to build interactive and dynamic web applications using C# and .NET. This application is designed to facilitate the creation, simulation, and analysis of digital logic circuits.
