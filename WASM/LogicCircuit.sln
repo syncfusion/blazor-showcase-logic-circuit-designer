@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.9.34310.174
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicCircuit", "LogicCircuit\LogicCircuit.csproj", "{BBA45557-E570-48DA-AE6E-61CF029CD9E3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicCircuit.Client", "LogicCircuit.Client\LogicCircuit.Client.csproj", "{DEDA07A3-020E-42BF-8808-7F7367D4B789}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWasmCommon_NET10", "..\Common\BlazorWasmCommon_NET10.csproj", "{379F596F-C62A-4F7B-8A3D-0CBDD46C7286}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWasmCommon_NET10", "..\Common\BlazorWasmCommon_NET10.csproj", "{B15E07FC-F6EC-D9F7-B03C-FBD63D03EF79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{DEDA07A3-020E-42BF-8808-7F7367D4B789}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEDA07A3-020E-42BF-8808-7F7367D4B789}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEDA07A3-020E-42BF-8808-7F7367D4B789}.Release|Any CPU.Build.0 = Release|Any CPU
-		{379F596F-C62A-4F7B-8A3D-0CBDD46C7286}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{379F596F-C62A-4F7B-8A3D-0CBDD46C7286}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{379F596F-C62A-4F7B-8A3D-0CBDD46C7286}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{379F596F-C62A-4F7B-8A3D-0CBDD46C7286}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B15E07FC-F6EC-D9F7-B03C-FBD63D03EF79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B15E07FC-F6EC-D9F7-B03C-FBD63D03EF79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B15E07FC-F6EC-D9F7-B03C-FBD63D03EF79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B15E07FC-F6EC-D9F7-B03C-FBD63D03EF79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

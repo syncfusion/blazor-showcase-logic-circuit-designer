@@ -37,7 +37,6 @@
             events.forEach(event => document.addEventListener(event, loadGTM, { once: true }));
         });
     </script>
-	<!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <title>
         Logic Circuit Designer  - Syncfusion Blazor Components Showcase App
@@ -50,14 +49,28 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <!-- Used for Property panel -->
     <link href=@Urihelper.Uri rel="canonical" />
-    <link href="_content/Syncfusion.Blazor/styles/fluent2.css" rel="stylesheet" />
+    <link href="_content/Syncfusion.Blazor.Themes/fluent2.css" rel="stylesheet" />
     <ResourcePreloader />
+        <!-- To refer the icons for the sample -->
+        <link href="@Assets["_content/BlazorServerCommon_NET10/assets/db-icons1/style.min.css"]" rel="stylesheet" />
+        <!-- Conatins the Css property used in the sample level -->
+        <link href="@Assets["_content/BlazorServerCommon_NET10/assets/dbstyle/diagrambuilder.min.css"]" rel="stylesheet" />
+        <script src="@Assets["_content/BlazorServerCommon_NET10/interop.min.js"]" async></script>  
         <!-- To refer the icons for the sample -->
         <link href="@Assets["_content/BlazorServerCommon_NET10/assets/db-icons1/style.css"]" rel="stylesheet" />
         <!-- Conatins the Css property used in the sample level -->
         <link href="@Assets["_content/BlazorServerCommon_NET10/assets/dbstyle/diagrambuilder.css"]" rel="stylesheet" />
         <script src="@Assets["_content/BlazorServerCommon_NET10/interop.js"]" async></script>  
-        <script src="@Assets["_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.Diagram/scripts/sf-diagramcomponent.min.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.Navigations/scripts/sf-toolbar.min.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.Popups/scripts/sf-dialog.min.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.SplitButtons/scripts/sf-drop-down-button.min.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.Inputs/scripts/sf-textbox.min.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.Inputs/scripts/sf-numerictextbox.min.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.Buttons/scripts/sf-checkbox.min.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.DropDowns/scripts/sf-dropdownlist.min.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.Inputs/scripts/sf-uploader.min.js"]"></script>
+ 
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <ImportMap />
     <HeadOutlet @rendermode="InteractiveServer" />

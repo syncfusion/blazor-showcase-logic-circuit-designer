@@ -8,67 +8,93 @@
 @inject IJSRuntime jsRuntime
 @namespace LogicCircuit
 
-<SfDialog @ref="@PrintDialog" @bind-Visible="@PrintDialogVisible" IsModal="true" Width="335px" ShowCloseIcon="true">
+<SfDialog @ref="@PrintDialog" @bind-Visible="@PrintDialogVisible"
+          IsModal="true" Width="335px" ShowCloseIcon="true">
+
     <DialogTemplates>
         <Header>Print Diagram</Header>
+
         <Content>
-            <div id="printDialogContent">
-                <div class="row">
-                    <div class="row">Region</div> <div class="row db-dialog-child-prop-row">
-                        <SfDropDownList ID="printRegionDropdown" TValue="Regions" TItem="string" Placeholder="Content" @bind-Value="@CurrentRegionValue" DataSource="@RegionValues">
-                        </SfDropDownList>
-                    </div>
-                </div><div class="row db-dialog-prop-row">
-                    <div class="row">Print Settings</div>
-                    <div class="row db-dialog-child-prop-row">
-                        <SfDropDownList ID="printPaperSizeDropdown" TValue="string" TItem = "DiagramPropertyContainer.PaperListFields" @bind-Value="@PaperSize" DataSource="@PaperList">
-                            <DropDownListFieldSettings Text="Text" Value="Value"></DropDownListFieldSettings>
-                            <DropDownListEvents TValue="string" TItem="DiagramPropertyContainer.PaperListFields" ValueChange="@PaperChanged"></DropDownListEvents>
-                        </SfDropDownList>
-                    </div>
+            <div style="padding:5px;">
+
+                <!-- Region -->
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; font-weight:500;">Region</label>
+                    <SfDropDownList ID="printRegionDropdown"
+                                    TValue="Regions"
+                                    TItem="string"
+                                    @bind-Value="@CurrentRegionValue"
+                                    DataSource="@RegionValues"
+                                    Placeholder="PageSettings"
+                                    Width="100%">
+                    </SfDropDownList>
                 </div>
-                <div id="printCustomSize" class="row db-dialog-prop-row" style="display:none; height: 28px;">
-                    <div class="col-xs-6 db-col-left">
-                        <div class="db-text-container">
-                            <div class="db-text"><span>W</span></div><div class="db-text-input">
-                                <SfNumericTextBox ID="printPageWidth" TValue="int" Min="100" Step="1" Format="int">
-                                </SfNumericTextBox>
-                            </div>
-                        </div>
-                    </div> <div class="col-xs-6 db-col-right">
-                        <div class="db-text-container">
-                            <div class="db-text"><span>H</span></div>
-                            <div class="db-text-input">
-                                <SfNumericTextBox ID="printPageHeight" TValue="int" Min="100" Step="1" Format="int">
-                                </SfNumericTextBox>
-                            </div>
-                        </div>
-                    </div>
-                </div><div id="printOrientation" class="row db-dialog-prop-row" style="height: 28px; padding: 5px 0px;">
-                    <div class="col-xs-3 db-prop-col-style" style="margin-right: 8px;">
-                        <SfRadioButton TChecked="string" Label="Potrait" Name="printSettings" Value="portrait" Checked="@orientationCheckedValue" ValueChange="@OrientationChanged">
-                           
-                        </SfRadioButton>
-                    </div>
-                    <div class="col-xs-3 db-prop-col-style">
-                        <SfRadioButton TChecked="string" Label="Landscape" Name="printSettings" Value="landscape" Checked="@orientationCheckedValue" ValueChange="@OrientationChanged">
-                        </SfRadioButton>
-                    </div>
+
+                <!-- Print Settings -->
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; font-weight:500;">Print Settings</label>
+                    <SfDropDownList ID="printPaperSizeDropdown"
+                                    TValue="string"
+                                    TItem="DiagramPropertyContainer.PaperListFields"
+                                    @bind-Value="@PaperSize"
+                                    DataSource="@PaperList"
+                                    Width="100%">
+                        <DropDownListFieldSettings Text="Text" Value="Value"></DropDownListFieldSettings>
+                        <DropDownListEvents TValue="string"
+                                            TItem="DiagramPropertyContainer.PaperListFields"
+                                            ValueChange="@PaperChanged">
+                        </DropDownListEvents>
+                    </SfDropDownList>
                 </div>
-                <div class="row db-dialog-prop-row" style="margin-top: 16px">
-                    <SfCheckBox ID="printMultiplePage" TChecked="bool" Label="Scale to fit entire page to single page" Checked="@IsMultiplePagePrint" ValueChange="@MultiplePage">
+
+                <!-- Orientation -->
+                <div style="display:flex; gap:20px; margin-bottom:10px; align-items:center;">
+                    <SfRadioButton TChecked="string"
+                                   Label="Portrait"
+                                   Name="printSettings"
+                                   Value="portrait"
+                                   Checked="@orientationCheckedValue"
+                                   ValueChange="@OrientationChanged">
+                    </SfRadioButton>
+
+                    <SfRadioButton TChecked="string"
+                                   Label="Landscape"
+                                   Name="printSettings"
+                                   Value="landscape"
+                                   Checked="@orientationCheckedValue"
+                                   ValueChange="@OrientationChanged">
+                    </SfRadioButton>
+                </div>
+
+                <!-- Checkbox -->
+                <div style="margin-top:10px;">
+                    <SfCheckBox ID="printMultiplePage"
+                                TChecked="bool"
+                                Label="Scale to fit entire page to single page"
+                                Checked="@IsMultiplePagePrint"
+                                ValueChange="@MultiplePage">
                     </SfCheckBox>
                 </div>
+
             </div>
         </Content>
     </DialogTemplates>
+
     <DialogAnimationSettings Effect="@DialogEffect.None"></DialogAnimationSettings>
+
     <DialogButtons>
-        <DialogButton OnClick="@PrintDialogHandler" Content="Print" CssClass="e-flat e-db-primary" IsPrimary="true">
+        <DialogButton OnClick="@PrintDialogHandler"
+                      Content="PRINT"
+                      CssClass="e-flat e-primary"
+                      IsPrimary="true">
         </DialogButton>
-        <DialogButton OnClick="@PrintDialogCloseHandler" Content="Cancel" CssClass="e-flat">
+
+        <DialogButton OnClick="@PrintDialogCloseHandler"
+                      Content="CANCEL"
+                      CssClass="e-flat">
         </DialogButton>
     </DialogButtons>
+
 </SfDialog>
 @code {
    

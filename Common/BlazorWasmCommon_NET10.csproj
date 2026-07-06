@@ -18,11 +18,15 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.1" PrivateAssets="all" />
-		<PackageReference Include="Syncfusion.Blazor" Version="33.1.44" />
+		<PackageReference Include="Syncfusion.Blazor.Diagram" Version="34.1.29" />
+		<PackageReference Include="Syncfusion.Blazor.Popups" Version="34.1.29" />
+		<PackageReference Include="Syncfusion.Blazor.PivotTable" Version="34.1.29" />
+		<PackageReference Include="Syncfusion.PdfExport.Net.Core" Version="34.1.29" />
+		<PackageReference Include="Syncfusion.Blazor.Themes" Version="34.1.29" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Net.Http.Json" Version="10.0.1" />
+		<PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
 		<PackageReference Include="Markdig" Version="0.23.0" />
 	</ItemGroup>
 

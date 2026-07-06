@@ -3,55 +3,94 @@
 @using Syncfusion.Blazor.Diagram
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Buttons
-@using LogicCircuit.Shared
+@using LogicCircuit.Shared 
 
 @inject Microsoft.JSInterop.IJSRuntime JS
 
 @inject IJSRuntime jsRuntime
 @namespace LogicCircuit
 
-<SfDialog @ref="@ExportDialog" @bind-Visible="@ExportDialogVisible" IsModal="true" AllowDragging="true" Width="400px" ShowCloseIcon="true">
+<SfDialog @ref="@ExportDialog" @bind-Visible="@ExportDialogVisible"
+          IsModal="true" AllowDragging="true" Width="400px" ShowCloseIcon="true">
+
     <DialogEvents OnOpen="OnDialogOpening"></DialogEvents>
+
     <DialogTemplates>
         <Header>Export Diagram</Header>
+
         <Content>
-            <div id="exportDialogContent">
-                <div class="row">
-                    <div class="row"> File Name </div> <div class="row db-dialog-child-prop-row">
-                        <input type="text" id="exportfileName" value="@DiagramfileName" @onchange="@fileNameChangeHandler">
-                    </div>
-                </div>
-                <div class="row db-dialog-prop-row">
-                    <div class="col-xs-6 db-col-left">
-                        <div class="row"> Format </div>
-                        <div class="row db-dialog-child-prop-row">
-                            <SfDropDownList ID="exportFormat" TValue="Formats" TItem="string" Placeholder="JPG" @bind-Value="@CurrentFormatValue" DataSource="@FormatValues">
+            <div style="padding:5px;">
 
-                            </SfDropDownList>
-                        </div>
-                    </div>
-                    <div class="col-xs-6 db-col-right">
-                        <div class="row"> Region </div> <div class="row db-dialog-child-prop-row">
-                            <SfDropDownList ID="exportRegion" TValue="Regions" TItem="string" Placeholder="Content" @bind-Value="@CurrentRegionValue" DataSource="@RegionValues">
-
-                            </SfDropDownList>
-                        </div>
-                    </div>
+                <!-- File Name -->
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; font-weight:500;">File Name</label>
+                    <input type="text"
+                           id="exportfileName"
+                           class="form-control"
+                           value="@DiagramfileName"
+                           @onchange="@fileNameChangeHandler" />
                 </div>
-                 <div class="row db-dialog-prop-row" style="margin-top: 16px">
-                    <SfCheckBox ID="exportMultiplePage" TChecked="bool" Label="Scale to fit entire page to single page" Checked="@IsMultiplePageExport" ValueChange="@MultiplePageExport">
+
+                <!-- Format & Region (SIDE BY SIDE) -->
+                <div style="display:flex; gap:12px; margin-bottom:15px;">
+
+                    <!-- Format -->
+                    <div style="flex:1;">
+                        <label style="display:block; font-weight:500;">Format</label>
+                        <SfDropDownList ID="exportFormat"
+                                        TValue="Formats"
+                                        TItem="string"
+                                        @bind-Value="@CurrentFormatValue"
+                                        DataSource="@FormatValues"
+                                        Placeholder="JPEG"
+                                        Width="100%">
+                        </SfDropDownList>
+                    </div>
+
+                    <!-- Region -->
+                    <div style="flex:1;">
+                        <label style="display:block; font-weight:500;">Region</label>
+                        <SfDropDownList ID="exportRegion"
+                                        TValue="Regions"
+                                        TItem="string"
+                                        @bind-Value="@CurrentRegionValue"
+                                        DataSource="@RegionValues"
+                                        Placeholder="PageSettings"
+                                        Width="100%">
+                        </SfDropDownList>
+                    </div>
+
+                </div>
+
+                <!-- Checkbox -->
+                <div>
+                    <SfCheckBox ID="exportMultiplePage"
+                                TChecked="bool"
+                                Label="Scale to fit entire page to single page"
+                                Checked="@IsMultiplePageExport"
+                                ValueChange="@MultiplePageExport">
                     </SfCheckBox>
                 </div>
+
             </div>
         </Content>
     </DialogTemplates>
+
     <DialogAnimationSettings Effect="@DialogEffect.None"></DialogAnimationSettings>
+
     <DialogButtons>
-        <DialogButton OnClick="@ExportHandler" Content="Export" CssClass="e-flat e-db-primary" IsPrimary="true">
+        <DialogButton OnClick="@ExportHandler"
+                      Content="EXPORT"
+                      CssClass="e-flat e-primary"
+                      IsPrimary="true">
         </DialogButton>
-        <DialogButton OnClick="@CloseDialogHandler" Content="Cancel" CssClass="e-flat">
+
+        <DialogButton OnClick="@CloseDialogHandler"
+                      Content="CANCEL"
+                      CssClass="e-flat">
         </DialogButton>
     </DialogButtons>
+
 </SfDialog>
 @code {
     /// <summary>

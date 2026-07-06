@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="System.Net.Http.Json" Version="10.0.1" />
+	<PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
 	<PackageReference Include="Markdig" Version="0.23.0" />
   </ItemGroup>
   <ItemGroup>
