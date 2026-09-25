@@ -1,14 +1,60 @@
 ﻿@page "/"
 @inject NavigationManager Urihelper
+
+@* SEO Variables - Single source of truth for all meta tags *@
+@{
+    string SeoTitle = "Logic Circuit Designer - Syncfusion Blazor Showcase";
+    string SeoDescription = "Design and simulate digital logic circuits with drag-and-drop gates and real-time signal visualization.";
+    string SiteUrl = Urihelper.Uri.TrimEnd('/');
+    string ApplicationName = "Logic Circuit Designer";
+    string Publisher = "Syncfusion";
+    string Language = "English";
+    string SocialImage = SiteUrl + "/diagram_component.svg";
+}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- HTML Title -->
+    <title>@SeoTitle</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="@SeoTitle" />
+    <meta name="description" content="@SeoDescription" />
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="logic circuit, digital design, circuit simulation, logic gates, electronics" />
+    <meta name="publisher" content="@Publisher" />
+    <meta name="language" content="@Language" />
+    
+    <!-- Canonical URL -->
+    <link href="https://showcase.syncfusion.com/logic-circuit-designer/blazor/" rel="canonical" />
+    
+    <!-- Alternate Language Tags -->
+    <link rel="alternate" hreflang="en-US" href="@SiteUrl" />
+    <link rel="alternate" hreflang="x-default" href="@SiteUrl" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@SeoTitle" />
+    <meta property="og:description" content="@SeoDescription" />
+    <meta property="og:url" content="@SiteUrl" />
+    <meta property="og:site_name" content="@ApplicationName" />
+    <meta property="og:image" content="@SocialImage" />
+    <meta property="og:image:alt" content="@ApplicationName Logo" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@SeoTitle" />
+    <meta name="twitter:description" content="@SeoDescription" />
+    <meta name="twitter:image" content="@SocialImage" />
+    <meta name="twitter:image:alt" content="@ApplicationName" />
+    <meta name="twitter:site" content="@@Syncfusion" />
+    
     <base href="/" />
     <!-- Google Tag Manager -->
-    <!-- Load GTM-P3WXFWCW immediately on page load  -->
+    <!-- Load GTM-WXZ6DX9B immediately on page load  -->
     <script>
         (function (w, d, s, l, i) {
             w[l] = w[l] || []; w[l].push({
@@ -17,7 +63,7 @@
             }); var f = d.getElementsByTagName(s)[0],
                 j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-P3WXFWCW');
+        })(window, document, 'script', 'dataLayer', 'GTM-WXZ6DX9B');
     </script>
     <!-- Load GTM-W8WD8WN on user interaction -->
     <script>
@@ -37,22 +83,13 @@
             events.forEach(event => document.addEventListener(event, loadGTM, { once: true }));
         });
     </script>
-    <meta charset="UTF-8" />
-    <title>Logic Circuit Designer - Syncfusion Blazor Showcase App</title>
+    <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="The Logic Circuit Designer App is a powerful, intuitive Blazor web app that lets you create, simulate, and analyze digital logic circuits efficiently.">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <!-- To choose the proper font family -->
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <!-- Used for Property panel -->
-    <link href="https://showcase.syncfusion.com/logic-circuit-designer/blazor/" rel="canonical" />
-    <meta property="og:title" content="Logic Circuit Designer  - Syncfusion Blazor Showcase App" />
-    <meta property="og:description" content="The Logic Circuit Designer App is a powerful, intuitive Blazor web app that lets you create, simulate, and analyze digital logic circuits efficiently." />
-    <meta property="og:url" content="https://showcase.syncfusion.com/logic-circuit-designer/blazor/" />
-    <meta property="og:image" content="@(Urihelper.BaseUri)diagram_component.svg" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
     <link href="_content/Syncfusion.Blazor.Themes/fluent2.css" rel="stylesheet" />
     <ResourcePreloader />
         <!-- To refer the icons for the sample -->
@@ -85,7 +122,7 @@
     <!-- Google Tag Manager (noscript) -->
     <!--Page Load-->
     <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P3WXFWCW" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WXZ6DX9B" height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
     <!--Interaction-->
     <noscript>
